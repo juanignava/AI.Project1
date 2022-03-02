@@ -4,6 +4,9 @@
 (require racket/draw
          net/url)
 
+; Requiered file.
+(require "Backend.rkt")
+
 ; main window
 (define my-window (new frame%
                        [label "Chinese Checkers"]
@@ -21,9 +24,28 @@
 (define button-image-gray (read-bitmap "Images/gray-circle.png"))
 
 ; button methods
-(define (first-button-response button event)
-  (display "first button pressed")
-  (send button set-label button-image-red))
+
+; name: get button number
+; description: returns the number of a given button
+; input: the button to search and a list with all the buttons
+; output: an integer with the number of the button
+(define (get-button-number button list cont)
+  (cond ( (empty? list)
+          (display "button not found"))
+       
+        ( (equal? button (object-list-current list))
+          (display cont))
+        
+        ( else
+          (get-button-number button (object-list-next list) (+ cont 1)))))
+
+
+(define (button-response button event)
+  (cond ( (or (equal? (send button get-label) button-image-red)
+              (equal? (send button get-label) button-image-green))
+          (deliver-options (get-button-number button button-list-1-2 1)))))
+
+;(send button set-label button-image-red))
 
 ; ### PANELS ###
 
@@ -154,7 +176,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-2 (new button%
@@ -163,7 +185,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-3 (new button%
@@ -172,7 +194,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-4 (new button%
@@ -181,7 +203,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-5 (new button%
@@ -190,7 +212,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-6 (new button%
@@ -199,7 +221,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-7 (new button%
@@ -208,7 +230,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-8 (new button%
@@ -217,7 +239,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-9 (new button%
@@ -226,7 +248,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-10 (new button%
@@ -235,7 +257,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-11 (new button%
@@ -244,7 +266,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-12 (new button%
@@ -253,7 +275,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-13 (new button%
@@ -262,7 +284,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-14 (new button%
@@ -271,7 +293,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-15 (new button%
@@ -280,7 +302,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-16 (new button%
@@ -289,7 +311,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-17 (new button%
@@ -298,7 +320,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-18 (new button%
@@ -307,7 +329,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-19 (new button%
@@ -316,7 +338,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-20 (new button%
@@ -325,7 +347,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-21 (new button%
@@ -334,7 +356,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-22 (new button%
@@ -343,7 +365,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-23 (new button%
@@ -352,7 +374,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-24 (new button%
@@ -361,7 +383,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-25 (new button%
@@ -370,7 +392,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-26 (new button%
@@ -379,7 +401,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-27 (new button%
@@ -388,7 +410,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-28 (new button%
@@ -397,7 +419,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-29 (new button%
@@ -406,7 +428,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-30 (new button%
@@ -415,7 +437,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-31 (new button%
@@ -424,7 +446,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-32 (new button%
@@ -433,7 +455,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-33 (new button%
@@ -442,7 +464,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-34 (new button%
@@ -451,7 +473,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-35 (new button%
@@ -460,7 +482,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-36 (new button%
@@ -469,7 +491,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-37 (new button%
@@ -478,7 +500,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-38 (new button%
@@ -487,7 +509,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-39 (new button%
@@ -496,7 +518,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-40 (new button%
@@ -505,7 +527,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-41 (new button%
@@ -514,7 +536,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-42 (new button%
@@ -523,7 +545,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-43 (new button%
@@ -532,7 +554,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #f]))
 
 (define button-44 (new button%
@@ -541,7 +563,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-45 (new button%
@@ -550,7 +572,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-46 (new button%
@@ -559,7 +581,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-47 (new button%
@@ -568,7 +590,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-48 (new button%
@@ -577,7 +599,7 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 (define button-49 (new button%
@@ -586,11 +608,63 @@
                       [min-width 30]
                       [min-height 30]
                       [font (make-object font% 15 'default 'normal 'normal)]
-                      [callback first-button-response]
+                      [callback button-response]
                       [enabled #t]))
 
 
 
+; make the button linked list (this simplifies the recursive funcions)
+(define-struct object-list (current next))
+
+(define button-list-49 (make-object-list button-49 '()))
+(define button-list-48-49 (make-object-list button-48 button-list-49))
+(define button-list-47-48 (make-object-list button-47 button-list-48-49))
+(define button-list-46-47 (make-object-list button-46 button-list-47-48))
+(define button-list-45-46 (make-object-list button-45 button-list-46-47))
+(define button-list-44-45 (make-object-list button-44 button-list-45-46))
+(define button-list-43-44 (make-object-list button-43 button-list-44-45))
+(define button-list-42-43 (make-object-list button-42 button-list-43-44))
+(define button-list-41-42 (make-object-list button-41 button-list-42-43))
+(define button-list-40-41 (make-object-list button-40 button-list-41-42))
+(define button-list-39-40 (make-object-list button-39 button-list-40-41))
+(define button-list-38-39 (make-object-list button-38 button-list-39-40))
+(define button-list-37-38 (make-object-list button-37 button-list-38-39))
+(define button-list-36-37 (make-object-list button-36 button-list-37-38))
+(define button-list-35-36 (make-object-list button-35 button-list-36-37))
+(define button-list-34-35 (make-object-list button-34 button-list-35-36))
+(define button-list-33-34 (make-object-list button-33 button-list-34-35))
+(define button-list-32-33 (make-object-list button-32 button-list-33-34))
+(define button-list-31-32 (make-object-list button-31 button-list-32-33))
+(define button-list-30-31 (make-object-list button-30 button-list-31-32))
+(define button-list-29-30 (make-object-list button-29 button-list-30-31))
+(define button-list-28-29 (make-object-list button-28 button-list-29-30))
+(define button-list-27-28 (make-object-list button-27 button-list-28-29))
+(define button-list-26-27 (make-object-list button-26 button-list-27-28))
+(define button-list-25-26 (make-object-list button-25 button-list-26-27))
+(define button-list-24-25 (make-object-list button-24 button-list-25-26))
+(define button-list-23-24 (make-object-list button-23 button-list-24-25))
+(define button-list-22-23 (make-object-list button-22 button-list-23-24))
+(define button-list-21-22 (make-object-list button-21 button-list-22-23))
+(define button-list-20-21 (make-object-list button-20 button-list-21-22))
+(define button-list-19-20 (make-object-list button-19 button-list-20-21))
+(define button-list-18-19 (make-object-list button-18 button-list-19-20))
+(define button-list-17-18 (make-object-list button-17 button-list-18-19))
+(define button-list-16-17 (make-object-list button-16 button-list-17-18))
+(define button-list-15-16 (make-object-list button-15 button-list-16-17))
+(define button-list-14-15 (make-object-list button-14 button-list-15-16))
+(define button-list-13-14 (make-object-list button-13 button-list-14-15))
+(define button-list-12-13 (make-object-list button-12 button-list-13-14))
+(define button-list-11-12 (make-object-list button-11 button-list-12-13))
+(define button-list-10-11 (make-object-list button-10 button-list-11-12))
+(define button-list-9-10 (make-object-list button-9 button-list-10-11))
+(define button-list-8-9 (make-object-list button-8 button-list-9-10))
+(define button-list-7-8 (make-object-list button-7 button-list-8-9))
+(define button-list-6-7 (make-object-list button-6 button-list-7-8))
+(define button-list-5-6 (make-object-list button-5 button-list-6-7))
+(define button-list-4-5 (make-object-list button-4 button-list-5-6))
+(define button-list-3-4 (make-object-list button-3 button-list-4-5))
+(define button-list-2-3 (make-object-list button-2 button-list-3-4))
+(define button-list-1-2 (make-object-list button-1 button-list-2-3))
 
 
 
