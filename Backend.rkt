@@ -1,5 +1,5 @@
 #lang racket/gui
-
+(provide (all-defined-out))
 
 ; ### STRUCTURES DEFINITION ###
 
@@ -487,6 +487,47 @@
 ; input: the number of the pressed button.
 ; output: a list with the numbers of the posible positions for that piece. Considering
 ;   the game rules.
+(define searched-node '())
 (provide deliver-options)
 (define (deliver-options button-number)
-  (display "options" ))
+  (display button-number)
+  (get-node button-number (board-n-1 game-board))
+  (posible-movements searched-node))
+
+(provide get-node)
+(define (get-node button-number node)
+  (cond ( (and (node? node) (equal? button-number (node-number node)))
+          (set! searched-node node))
+        ( (node? node)
+          (get-node button-number (node-nn-dl node))
+          (get-node button-number (node-nn-dr node)))))
+
+(provide posible-movements)
+(define (posible-movements node)
+  (define result-list '())
+  (cond ( (and (node? (node-nn-ul node)) (equal? (node-state (node-nn-ul node)) "free"))
+          (set! result-list (cons (node-number (node-nn-ul node)) result-list))))
+  
+  (cond ( (and (node? (node-nn-ur node)) (equal? (node-state (node-nn-ur node)) "free"))
+          (set! result-list (cons (node-number (node-nn-ur node)) result-list))))
+
+  (cond ( (and (node? (node-nn-r node)) (equal? (node-state (node-nn-r node)) "free"))
+          (set! result-list (cons (node-number (node-nn-r node)) result-list))))
+
+  (cond ( (and (node? (node-nn-dr node)) (equal? (node-state (node-nn-dr node)) "free"))
+          (set! result-list (cons (node-number (node-nn-dr node)) result-list))))
+
+  (cond ( (and (node? (node-nn-dl node)) (equal? (node-state (node-nn-dl node)) "free"))
+          (set! result-list (cons (node-number (node-nn-dl node)) result-list))))
+
+  (cond ( (and (node? (node-nn-l node)) (equal? (node-state (node-nn-l node)) "free"))
+          (set! result-list (cons (node-number (node-nn-l node)) result-list))))
+  result-list)
+        
+  
+
+
+
+                  
+  
+  

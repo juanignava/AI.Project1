@@ -34,7 +34,7 @@
           (display "button not found"))
        
         ( (equal? button (object-list-current list))
-          cont)
+          (display cont))
         
         ( else
           (get-button-number button (object-list-next list) (+ cont 1)))))
@@ -43,7 +43,7 @@
 (define (button-response button event)
   (cond ( (or (equal? (send button get-label) button-image-red)
               (equal? (send button get-label) button-image-green))
-          (display (deliver-options (get-button-number button button-list-1-2 1))))))
+          (deliver-options (get-button-number button button-list-1-2 1)))))
 
 ;(send button set-label button-image-red))
 
