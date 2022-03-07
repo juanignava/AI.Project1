@@ -523,10 +523,17 @@
   (cond ( (and (node? (node-nn-l node)) (equal? (node-state (node-nn-l node)) "free"))
           (set! result-list (cons (node-number (node-nn-l node)) result-list))))
   result-list)
+
+(provide change-state)
+(define (change-state button-num state)
+  (display "here")
+  (display button-num)
+  (get-node button-num (board-n-1 game-board))
+  (set-node-state! searched-node state))
         
   
 
-
+;(set-node-nn-5! (board-node-1 game-board) (board-node-2 game-board))
 
                   
   

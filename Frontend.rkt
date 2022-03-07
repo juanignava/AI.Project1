@@ -23,6 +23,10 @@
 (define button-image-green (read-bitmap "Images/green-circle.png"))
 (define button-image-gray (read-bitmap "Images/gray-circle.png"))
 
+; ## VARIABLES ##
+
+(define in-movement #f)
+
 ; button methods
 
 ; name: get button number
@@ -39,11 +43,65 @@
         ( else
           (get-button-number button (object-list-next list) (+ cont 1)))))
 
+(define (get-button-from-number list cont number)
+  (cond ( (empty? list)
+          (display "button not found"))
+       
+        ( (equal? number cont)
+          (object-list-current list))
+        
+        ( else
+          (get-button-from-number (object-list-next list) (+ cont 1) number))))
+
+(define (get-button-from-color list color)
+  (cond ( (empty? list)
+          (display "button not found"))
+       
+        ( (equal? (send (object-list-current list) get-label) color)
+          (object-list-current list))
+        
+        ( else
+          (get-button-from-color (object-list-next list) color))))
 
 (define (button-response button event)
-  (cond ( (or (equal? (send button get-label) button-image-red)
-              (equal? (send button get-label) button-image-green))
-          (display (deliver-options (get-button-number button button-list-1-2 1))))))
+          ; if a red button is pressed and the user is not in movement
+  (cond ( (and (equal? (send button get-label) button-image-red) (not in-movement))
+          (set! in-movement #t)
+          (send button set-label button-image-blue)
+          (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-pink))
+
+        ; if a pink button is pressed and the user is in movement
+        ( (and (equal? (send button get-label) button-image-pink) in-movement)
+          (set! in-movement #f)
+          (define previous-button (get-button-from-color button-list-1-2 button-image-blue))
+          (color-options (deliver-options (get-button-number previous-button button-list-1-2 1)) button-image-gray)
+          (send previous-button set-label button-image-gray)
+          (send previous-button enable #f)
+          (change-state (get-button-number previous-button button-list-1-2 1) "free")
+          (send button set-label button-image-red)
+          (send button enable #t)
+          (change-state (get-button-number button button-list-1-2 1) "user"))
+
+        ; if a blue button is pressed and the user is in movement
+        ( (and (equal? (send button get-label) button-image-blue) in-movement)
+          (set! in-movement #f)
+          (send button set-label button-image-red)
+          (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-gray))))
+          
+
+
+(define (color-options list color)
+  (cond ( (empty? list)
+          )
+        ( else
+          (cond ( (equal? color button-image-pink)
+                  (send (get-button-from-number button-list-1-2 1 (car list)) enable #t))
+                 ( (equal? color button-image-gray)
+                  (send (get-button-from-number button-list-1-2 1 (car list)) enable #f)))
+          
+          (send (get-button-from-number button-list-1-2 1 (car list)) set-label color)
+          (color-options (cdr list) color))))
+ 
 
 ;(send button set-label button-image-red))
 
