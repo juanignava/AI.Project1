@@ -10,14 +10,29 @@
 ;        "ai" which means there is a ai piece
 ;        "user" which means there is a user piece
 ;        "free" which means there is field has no piece
+;   neighbors: are all the possible 6 neighbors a node can have
+;        nn-ul -> upper left neighbor
+;        nn-ur -> upper right neighbor
+;        nn-r  -> right neighbor
+;        nn-dr -> down right neighbor
+;        nn-dl -> down left neighbor
+;        nn-l  -> left neighbor
 (define-struct node (number state nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
 
+
+; board structure
+; items: it has the 49 nodes of the board has items with the terminology
+;    n-x where "x" stands for the number of the node.
 (define-struct board (n-1 n-2 n-3 n-4 n-5 n-6 n-7 n-8 n-9 n-10
                       n-11 n-12 n-13 n-14 n-15 n-16 n-17 n-18 n-19 n-20
                       n-21 n-22 n-23 n-24 n-25 n-26 n-27 n-28 n-29 n-30
                       n-31 n-32 n-33 n-34 n-35 n-36 n-37 n-38 n-39 n-40
                       n-41 n-42 n-43 n-44 n-45 n-46 n-47 n-48 n-49))
 
+; ## VARIABLES ##
+
+; game-board is the board used in the game with the
+;   definition of all its nodes.
 (define game-board (make-board
   (make-node 1 "ai" '() '() '() '() '() '())
   (make-node 2 "ai" '() '() '() '() '() '())
@@ -410,7 +425,125 @@
 (set-node-nn-ul! (board-n-49 game-board) (board-n-47 game-board))
 (set-node-nn-ur! (board-n-49 game-board) (board-n-48 game-board))
 
+; ### FUNCTIONS ###
 
+; name: DELIVER OPTIONS
+; description: receives the name of the node the user pressed and returns the posible new
+;   positions that this piece can have.
+
+; input: the number of the pressed button.
+; output: a list with the numbers of the posible positions for that piece.
+(provide deliver-options)
+(define (deliver-options button-number)
+  (get-node button-number (board-n-1 game-board))
+  (set! result-list '())
+  (posible-movements searched-node "all" 0 0))
+
+
+; name: GET NODE
+; description: seraches for a node based on the node number
+
+; input: the number of the button we want, and a place to start the search (usually
+;  the first node of the structure (board-n-1 game board))
+(define searched-node '()) ; helper variable
+(provide get-node)
+(define (get-node button-number node)
+  (cond ( (and (node? node) (equal? button-number (node-number node)))
+          (set! searched-node node))
+        ( (node? node)
+          (get-node button-number (node-nn-dl node))
+          (get-node button-number (node-nn-dr node)))))
+
+; name: POSIBLE MOVEMENTS
+; description: gives all the posible options of movement for a given node.
+
+; input: the node in search and other recursive variables like
+;   direction -> the direction in seach
+;   cont-b -> a counter of the consecutive "not free" items
+;   cont-f -> a counter of the consecutive "free" items
+(define result-list '()) ; helper variable
+(provide posible-movements)
+(define (posible-movements node direction cont-b cont-f)
+         ; check if node is actuallya node and it is not already in the result list
+  (cond ( (and (node? node) (is-in-list node result-list)))
+
+        ; control the consecutive blocks
+        ( (equal? cont-b 2))
+        ( (equal? cont-f 2))
+        ( else
+
+          ; case in which the direction is ul or all
+          (cond ( (and (node? (node-nn-ul node)) (equal? (node-state (node-nn-ul node)) "free") (or (equal? direction "all") (equal? direction "ul")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-ul node)) result-list))))
+                  (posible-movements (node-nn-ul node) "ul" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-ul node)) (or (equal? direction "all") (equal? direction "ul")))
+                  (posible-movements (node-nn-ul node) "ul" (+ cont-b 1) 0)))
+
+          ; case in which the direction is ur or all
+          (cond ( (and (node? (node-nn-ur node)) (equal? (node-state (node-nn-ur node)) "free") (or (equal? direction "all") (equal? direction "ur")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-ur node)) result-list))))
+                  (posible-movements (node-nn-ur node) "ur" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-ur node)) (or (equal? direction "all") (equal? direction "ur")))
+                  (posible-movements (node-nn-ur node) "ur" (+ cont-b 1) 0)))
+
+          ; case in which the directon is r or all
+          (cond ( (and (node? (node-nn-r node)) (equal? (node-state (node-nn-r node)) "free") (or (equal? direction "all") (equal? direction "r")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-r node)) result-list))))
+                  (posible-movements (node-nn-r node) "r" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-r node)) (or (equal? direction "all") (equal? direction "r")))
+                  (posible-movements (node-nn-r node) "r" (+ cont-b 1) 0)))
+
+          ; case in which the direction is dr or all
+          (cond ( (and (node? (node-nn-dr node)) (equal? (node-state (node-nn-dr node)) "free") (or (equal? direction "all") (equal? direction "dr")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-dr node)) result-list))))
+                  (posible-movements (node-nn-dr node) "dr" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-dr node)) (or (equal? direction "all") (equal? direction "dr")))
+                  (posible-movements (node-nn-dr node) "dr" (+ cont-b 1) 0)))
+
+          ; case in which the direction is dl or all
+          (cond ( (and (node? (node-nn-dl node)) (equal? (node-state (node-nn-dl node)) "free") (or (equal? direction "all") (equal? direction "dl")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-dl node)) result-list))))
+                  (posible-movements (node-nn-dl node) "dl" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-dl node)) (or (equal? direction "all") (equal? direction "dl")))
+                  (posible-movements (node-nn-dl node) "dl" (+ cont-b 1) 0)))
+
+          ; case in which the direction is l or all
+          (cond ( (and (node? (node-nn-l node)) (equal? (node-state (node-nn-l node)) "free") (or (equal? direction "all") (equal? direction "l")))
+                  (cond ( (not (equal? cont-f 1))
+                          (set! result-list (cons (node-number (node-nn-l node)) result-list))))
+                  (posible-movements (node-nn-l node) "l" 0 (+ cont-f 1)))
+                ( (and (node? (node-nn-l node)) (or (equal? direction "all") (equal? direction "l")))
+                  (posible-movements (node-nn-l node) "l" (+ cont-b 1) 0)))
+          result-list)))
+
+; name: IS IN LIST
+; description: checks if a given node is part of a list
+(define (is-in-list node list)
+  (cond ( (empty? list)
+          #f)
+        ( (equal? node (car list))
+          #t)
+        ( else
+          (is-in-list node (cdr list)))))
+
+; name: CHANGE STATE
+; description: changes the state of a given node to the one specified in the parameter.
+
+; input: the number of the button and the state we want to have
+(provide change-state)
+(define (change-state button-num state)
+  (get-node button-num (board-n-1 game-board))
+  (set-node-state! searched-node state))
+
+
+
+
+; ########################
 ; ## IMPORTANTE ##
 ; para cambiar uno de los nodos:
 ; (set-node-nn-5! (board-node-1 game-board) (board-node-2 game-board))
@@ -423,159 +556,8 @@
 ; movimimentos (cambiar el state de los nodos a free y de free a ai)
 ; eso se puede guardar en otra estructura
 
-;(define-struct movements 
+; ########################
 
-; una solución es hacer que haya una estructura de nodos que referencie
-; su valor, estado y los nodos con los cuales se comunica (tal vez referenciandolos
-; a todos los nodos como mutables y después haciendo las respectivas modificaciones para qu
-; queden acomodados como se quieren y después hacer una estructura grande que se componga por
-; 49 diferentes estructuras que son los nodos,
-
-
-
-#|
-(define node-1 (make-node 1 "ai"))
-(define node-2 (make-node 2 "ai"))
-(define node-3 (make-node 3 "ai"))
-
-; edge structure
-(define-struct edge (l-node g-node))
-
-; 1st row
-(define edge-1-2 (make-edge node-1 node-2))
-(define edge-1-3 (make-edge node-1 node-3))
-; 2nd row
-(define edge-2-3 (make-edge node-2 node-3))
-(define edge-2-4 (make-edge node-2 node-4))
-(define edge-2-5 (make-edge node-2 node-5))
-(define edge-3-5 (make-edge node-3 node-5))
-(define edge-3-6 (make-edge node-3 node-6))
-; 3rd row
-(define edge-4-5 (make-edge node-4 node-5))
-(define edge-5-6 (make-edge node-5 node-6))
-(define edge-4-7 (make-edge node-4 node-7))
-(define edge-4-8 (make-edge node-4 node-8))
-(define edge-5-8 (make-edge node-5 node-8))
-(define edge-5-9 (make-edge node-5 node-9))
-(define edge-6-9 (make-edge node-6 node-9))
-(define edge-6-10 (make-edge node-6 node-10))
-; 4th row
-(define edge-7-8 (make-edge node-7 node-8))
-(define edge-8-9 (make-edge node-8 node-9))
-(define edge-9-10 (make-edge node-9 node-10))
-(define edge-7-11 (make-edge node-7 node-11))
-(define edge-7-12 (make-edge node-7 node-12))
-(define edge-8-12 (make-edge node-8 node-12))
-(define edge-8-13 (make-edge node-8 node-13))
-(define edge-9-13 (make-edge node-9 node-13))
-(define edge-9-14 (make-edge node-9 node-14))
-(define edge-10-14 (make-edge node-10 node-14))
-(define edge-10-15 (make-edge node-10 node-15))
-; 5th row
-(define edge-11-12 (make-edge node-11 node-12))
-(define edge-12-13 (make-edge node-12 node-13))
-
-
-
-(define edges-list '(edge-1-2 edge-1-3 edge-2-3))
-|#
-; ### FUNCTIONS ###
-
-; name: deliver options
-; description: receives the name of the node the user pressed and returns the posible new
-;   positions that this piece can have.
-; input: the number of the pressed button.
-; output: a list with the numbers of the posible positions for that piece. Considering
-;   the game rules.
-(define searched-node '())
-(provide deliver-options)
-(define (deliver-options button-number)
-  (display button-number)
-  (get-node button-number (board-n-1 game-board))
-  (set! result-list '())
-  (posible-movements searched-node "all" 0 0))
-
-(provide get-node)
-(define (get-node button-number node)
-  (cond ( (and (node? node) (equal? button-number (node-number node)))
-          (set! searched-node node))
-        ( (node? node)
-          (get-node button-number (node-nn-dl node))
-          (get-node button-number (node-nn-dr node)))))
-
-(define result-list '())
-(provide posible-movements)
-(define (posible-movements node direction cont-b cont-f)
-  ; revisar si lo que llegó es un nodo
-  (display result-list)
-  (display "\n")
-  (cond ( (and (node? node) (is-in-list node result-list)))
-        ( (equal? cont-b 2))
-        ( (equal? cont-f 2))
-        ( else
-          
-          
-          (cond ( (and (node? (node-nn-ul node)) (equal? (node-state (node-nn-ul node)) "free") (or (equal? direction "all") (equal? direction "ul")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-ul node)) result-list))))
-                  (posible-movements (node-nn-ul node) "ul" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-ul node)) (or (equal? direction "all") (equal? direction "ul")))
-                  (posible-movements (node-nn-ul node) "ul" (+ cont-b 1) 0)))
-  
-          (cond ( (and (node? (node-nn-ur node)) (equal? (node-state (node-nn-ur node)) "free") (or (equal? direction "all") (equal? direction "ur")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-ur node)) result-list))))
-                  (posible-movements (node-nn-ur node) "ur" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-ur node)) (or (equal? direction "all") (equal? direction "ur")))
-                  (posible-movements (node-nn-ur node) "ur" (+ cont-b 1) 0)))
-
-          (cond ( (and (node? (node-nn-r node)) (equal? (node-state (node-nn-r node)) "free") (or (equal? direction "all") (equal? direction "r")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-r node)) result-list))))
-                  (posible-movements (node-nn-r node) "r" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-r node)) (or (equal? direction "all") (equal? direction "r")))
-                  (posible-movements (node-nn-r node) "r" (+ cont-b 1) 0)))
-
-          (cond ( (and (node? (node-nn-dr node)) (equal? (node-state (node-nn-dr node)) "free") (or (equal? direction "all") (equal? direction "dr")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-dr node)) result-list))))
-                  (posible-movements (node-nn-dr node) "dr" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-dr node)) (or (equal? direction "all") (equal? direction "dr")))
-                  (posible-movements (node-nn-dr node) "dr" (+ cont-b 1) 0)))
-
-          (cond ( (and (node? (node-nn-dl node)) (equal? (node-state (node-nn-dl node)) "free") (or (equal? direction "all") (equal? direction "dl")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-dl node)) result-list))))
-                  (posible-movements (node-nn-dl node) "dl" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-dl node)) (or (equal? direction "all") (equal? direction "dl")))
-                  (posible-movements (node-nn-dl node) "dl" (+ cont-b 1) 0)))
-
-          (cond ( (and (node? (node-nn-l node)) (equal? (node-state (node-nn-l node)) "free") (or (equal? direction "all") (equal? direction "l")))
-                  (cond ( (not (equal? cont-f 1))
-                          (set! result-list (cons (node-number (node-nn-l node)) result-list))))
-                  (posible-movements (node-nn-l node) "l" 0 (+ cont-f 1)))
-                ( (and (node? (node-nn-l node)) (or (equal? direction "all") (equal? direction "l")))
-                  (posible-movements (node-nn-l node) "l" (+ cont-b 1) 0)))
-          result-list)))
-
-(define (is-in-list node list)
-  (cond ( (empty? list)
-          #f)
-        ( (equal? node (car list))
-          #t)
-        ( else
-          (is-in-list node (cdr list)))))
-        
-(provide change-state)
-(define (change-state button-num state)
-  (display "here")
-  (display button-num)
-  (get-node button-num (board-n-1 game-board))
-  (set-node-state! searched-node state))
-
-
-
-;(set-node-nn-5! (board-node-1 game-board) (board-node-2 game-board))
 
                   
   

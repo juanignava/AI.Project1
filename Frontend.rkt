@@ -16,6 +16,8 @@
                        [alignment '(left top)]))
 
 
+; ## CONSTANTS ##
+
 ; button images
 (define button-image-blue (read-bitmap "Images/blue-circle.png"))
 (define button-image-red (read-bitmap "Images/red-circle.png"))
@@ -25,24 +27,33 @@
 
 ; ## VARIABLES ##
 
+; flag for a piece that is in movement
 (define in-movement #f)
 
-; button methods
+; ## FUNCTIONS ##
 
-; name: get button number
+; name: GET BUTTON NUMBER
 ; description: returns the number of a given button
-; input: the button to search and a list with all the buttons
+
+; input: the button to search and a list with all the buttons,
+;   also a counter (because the method is recursive
 ; output: an integer with the number of the button
 (define (get-button-number button list cont)
   (cond ( (empty? list)
           (display "button not found"))
-       
+
         ( (equal? button (object-list-current list))
           cont)
         
         ( else
           (get-button-number button (object-list-next list) (+ cont 1)))))
 
+; name: GET BUTTON FROM NUMBER
+; description: searches for a button based on its number.
+
+; input: list with all the buttons, a counter (because the function is recursive)
+;   and the number if the button.
+; output: a button.
 (define (get-button-from-number list cont number)
   (cond ( (empty? list)
           (display "button not found"))
@@ -53,6 +64,12 @@
         ( else
           (get-button-from-number (object-list-next list) (+ cont 1) number))))
 
+; name: GET BUTTON FROM COLOR
+; description: searches for a button based on its color (returns first coincidence).
+
+; input: list with all the buttons, a counter (because the function is recursive)
+;   and the color of the button.
+; output: a button.
 (define (get-button-from-color list color)
   (cond ( (empty? list)
           (display "button not found"))
@@ -63,14 +80,22 @@
         ( else
           (get-button-from-color (object-list-next list) color))))
 
+; name: BUTTON RESPONSE
+; description: this function is the main function when a button
+;    from the board is pressed.
+
+; input: the button pressed
 (define (button-response button event)
-          ; if a red button is pressed and the user is not in movement
+  
+          ; if a red button is pressed and the user is not in movement and
+  ; displays all the possible movements.
   (cond ( (and (equal? (send button get-label) button-image-red) (not in-movement))
           (set! in-movement #t)
           (send button set-label button-image-blue)
           (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-pink))
 
-        ; if a pink button is pressed and the user is in movement
+        ; if a pink button is pressed and the user is in movement and moves the selected
+        ; tile to the pressed position.
         ( (and (equal? (send button get-label) button-image-pink) in-movement)
           (set! in-movement #f)
           (define previous-button (get-button-from-color button-list-1-2 button-image-blue))
@@ -82,18 +107,24 @@
           (send button enable #t)
           (change-state (get-button-number button button-list-1-2 1) "user"))
 
-        ; if a blue button is pressed and the user is in movement
+        ; if a blue button is pressed and the user is in movement and cancels the movement by
+        ; deleting the movement options
         ( (and (equal? (send button get-label) button-image-blue) in-movement)
           (set! in-movement #f)
           (send button set-label button-image-red)
           (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-gray))))
           
 
+; name: COLOR OPTIONS
+; description: colors a given list of nodes (the list has the numbers of the buttons)
+;   with the indicated color.
 
+; input: list with the number of the buttons, and the color needed
 (define (color-options list color)
-  (cond ( (empty? list)
-          )
+  (cond ( (empty? list))
         ( else
+          ; if the color is pink the buttons have to be enabled
+          ; if the color is gray the buttons have to be disabled
           (cond ( (equal? color button-image-pink)
                   (send (get-button-from-number button-list-1-2 1 (car list)) enable #t))
                  ( (equal? color button-image-gray)
@@ -102,8 +133,6 @@
           (send (get-button-from-number button-list-1-2 1 (car list)) set-label color)
           (color-options (cdr list) color))))
  
-
-;(send button set-label button-image-red))
 
 ; ### PANELS ###
 
