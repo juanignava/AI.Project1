@@ -519,7 +519,10 @@
                   (posible-movements (node-nn-l node) "l" 0 (+ cont-f 1)))
                 ( (and (node? (node-nn-l node)) (or (equal? direction "all") (equal? direction "l")))
                   (posible-movements (node-nn-l node) "l" (+ cont-b 1) 0)))
+          
+          ; return result
           result-list)))
+  
 
 ; name: IS IN LIST
 ; description: checks if a given node is part of a list
