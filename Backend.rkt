@@ -17,7 +17,7 @@
 ;        nn-dr -> down right neighbor
 ;        nn-dl -> down left neighbor
 ;        nn-l  -> left neighbor
-(define-struct node (number state nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
+(define-struct node (number state depth nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
 
 
 ; board structure
@@ -31,62 +31,62 @@
 
 
 (define node-0
-  (make-node 0 "free" '() '() '() '() '() '()))
+  (make-node 0 "free" 0 '() '() '() '() '() '()))
 
 ; ## VARIABLES ##
 
 ; game-board is the board used in the game with the
 ;   definition of all its nodes.
 (define game-board (make-board
-  (make-node 1 "ai" '() '() '() '() '() '())
-  (make-node 2 "ai" '() '() '() '() '() '())
-  (make-node 3 "ai" '() '() '() '() '() '())
-  (make-node 4 "ai" '() '() '() '() '() '())
-  (make-node 5 "ai" '() '() '() '() '() '())
-  (make-node 6 "ai" '() '() '() '() '() '())
-  (make-node 7 "free" '() '() '() '() '() '())
-  (make-node 8 "free" '() '() '() '() '() '())
-  (make-node 9 "free" '() '() '() '() '() '())
-  (make-node 10 "free" '() '() '() '() '() '())
-  (make-node 11 "free" '() '() '() '() '() '())
-  (make-node 12 "free" '() '() '() '() '() '())
-  (make-node 13 "free" '() '() '() '() '() '())
-  (make-node 14 "free" '() '() '() '() '() '())
-  (make-node 15 "free" '() '() '() '() '() '())
-  (make-node 16 "free" '() '() '() '() '() '())
-  (make-node 17 "free" '() '() '() '() '() '())
-  (make-node 18 "free" '() '() '() '() '() '())
-  (make-node 19 "free" '() '() '() '() '() '())
-  (make-node 20 "free" '() '() '() '() '() '())
-  (make-node 21 "free" '() '() '() '() '() '())
-  (make-node 22 "free" '() '() '() '() '() '())
-  (make-node 23 "free" '() '() '() '() '() '())
-  (make-node 24 "free" '() '() '() '() '() '())
-  (make-node 25 "free" '() '() '() '() '() '())
-  (make-node 26 "free" '() '() '() '() '() '())
-  (make-node 27 "free" '() '() '() '() '() '())
-  (make-node 28 "free" '() '() '() '() '() '())
-  (make-node 29 "free" '() '() '() '() '() '())
-  (make-node 30 "free" '() '() '() '() '() '())
-  (make-node 31 "free" '() '() '() '() '() '())
-  (make-node 32 "free" '() '() '() '() '() '())
-  (make-node 33 "free" '() '() '() '() '() '())
-  (make-node 34 "free" '() '() '() '() '() '())
-  (make-node 35 "free" '() '() '() '() '() '())
-  (make-node 36 "free" '() '() '() '() '() '())
-  (make-node 37 "free" '() '() '() '() '() '())
-  (make-node 38 "free" '() '() '() '() '() '())
-  (make-node 39 "free" '() '() '() '() '() '())
-  (make-node 40 "free" '() '() '() '() '() '())
-  (make-node 41 "free" '() '() '() '() '() '())
-  (make-node 42 "free" '() '() '() '() '() '())
-  (make-node 43 "free" '() '() '() '() '() '())
-  (make-node 44 "user" '() '() '() '() '() '())
-  (make-node 45 "user" '() '() '() '() '() '())
-  (make-node 46 "user" '() '() '() '() '() '())
-  (make-node 47 "user" '() '() '() '() '() '())
-  (make-node 48 "user" '() '() '() '() '() '())
-  (make-node 49 "user" '() '() '() '() '() '())))  
+  (make-node 1 "ai" 1 '() '() '() '() '() '())
+  (make-node 2 "ai" 2 '() '() '() '() '() '())
+  (make-node 3 "ai" 2 '() '() '() '() '() '())
+  (make-node 4 "ai" 3 '() '() '() '() '() '())
+  (make-node 5 "ai" 3 '() '() '() '() '() '())
+  (make-node 6 "ai" 3 '() '() '() '() '() '())
+  (make-node 7 "free" 4 '() '() '() '() '() '())
+  (make-node 8 "free" 4 '() '() '() '() '() '())
+  (make-node 9 "free" 4 '() '() '() '() '() '())
+  (make-node 10 "free" 4 '() '() '() '() '() '())
+  (make-node 11 "free" 5 '() '() '() '() '() '())
+  (make-node 12 "free" 5 '() '() '() '() '() '())
+  (make-node 13 "free" 5 '() '() '() '() '() '())
+  (make-node 14 "free" 5 '() '() '() '() '() '())
+  (make-node 15 "free" 5 '() '() '() '() '() '())
+  (make-node 16 "free" 6 '() '() '() '() '() '())
+  (make-node 17 "free" 6 '() '() '() '() '() '())
+  (make-node 18 "free" 6 '() '() '() '() '() '())
+  (make-node 19 "free" 6 '() '() '() '() '() '())
+  (make-node 20 "free" 6 '() '() '() '() '() '())
+  (make-node 21 "free" 6 '() '() '() '() '() '())
+  (make-node 22 "free" 7 '() '() '() '() '() '())
+  (make-node 23 "free" 7 '() '() '() '() '() '())
+  (make-node 24 "free" 7 '() '() '() '() '() '())
+  (make-node 25 "free" 7 '() '() '() '() '() '())
+  (make-node 26 "free" 7 '() '() '() '() '() '())
+  (make-node 27 "free" 7 '() '() '() '() '() '())
+  (make-node 28 "free" 7 '() '() '() '() '() '())
+  (make-node 29 "free" 8 '() '() '() '() '() '())
+  (make-node 30 "free" 8 '() '() '() '() '() '())
+  (make-node 31 "free" 8 '() '() '() '() '() '())
+  (make-node 32 "free" 8 '() '() '() '() '() '())
+  (make-node 33 "free" 8 '() '() '() '() '() '())
+  (make-node 34 "free" 8 '() '() '() '() '() '())
+  (make-node 35 "free" 9 '() '() '() '() '() '())
+  (make-node 36 "free" 9 '() '() '() '() '() '())
+  (make-node 37 "free" 9 '() '() '() '() '() '())
+  (make-node 38 "free" 9 '() '() '() '() '() '())
+  (make-node 39 "free" 9 '() '() '() '() '() '())
+  (make-node 40 "free" 10 '() '() '() '() '() '())
+  (make-node 41 "free" 10 '() '() '() '() '() '())
+  (make-node 42 "free" 10 '() '() '() '() '() '())
+  (make-node 43 "free" 10 '() '() '() '() '() '())
+  (make-node 44 "user" 11 '() '() '() '() '() '())
+  (make-node 45 "user" 11 '() '() '() '() '() '())
+  (make-node 46 "user" 11 '() '() '() '() '() '())
+  (make-node 47 "user" 12 '() '() '() '() '() '())
+  (make-node 48 "user" 12 '() '() '() '() '() '())
+  (make-node 49 "user" 13 '() '() '() '() '() '())))  
 
 ; Define the connections in the board
 
@@ -620,6 +620,31 @@
         ; if the node to consider is not of the type needed it just ignores the analysis for it
         ( else
           (append '() (generate-all-children mov-type (- node-num 1))))))
+
+; name: FILTER CHILDREN
+; desciption: this method filters the options of movements with just the ones that are allows
+;   moving forward (doesn't considers moving to the side or backwards)
+
+; input: list1 -> it corresponds to the list of all the possible movements in the current board
+;        mov-type -> indicates the type of the movement "ai" or "user" depending on who is moving the
+;        pieces this time.
+(define (filter-children list1 mov-type)
+  (cond ( (empty? list1)
+          '())
+        ; if the ai is moving, it only consider movements that make the tile move forward (a greater number of depth)
+        ( (equal? mov-type "ai")
+          (cond ( (< (node-depth (caar list1)) (node-depth (cadar list1)))
+                  (append (list (car list1)) (filter-children (cdr list1) mov-type)))
+                ( else
+                  (append '() (filter-children (cdr list1) mov-type)))))
+        ; if the user is moving, it only consider movements that make the tile move forward (a lesser number of depth)
+        ( (equal? mov-type "user")
+          (cond ( (> (node-depth (caar list1)) (node-depth (cadar list1)))
+                  (append (list (car list1)) (filter-children (cdr list1) mov-type)))
+                ( else
+                  (append '() (filter-children (cdr list1) mov-type)))))))
+        
+           
 
 ; name: GET CHILDREN
 ; description: this function returns the children that the can be obtained from the current board
