@@ -29,6 +29,10 @@
                       n-31 n-32 n-33 n-34 n-35 n-36 n-37 n-38 n-39 n-40
                       n-41 n-42 n-43 n-44 n-45 n-46 n-47 n-48 n-49))
 
+
+(define node-0
+  (make-node 0 "free" '() '() '() '() '() '()))
+
 ; ## VARIABLES ##
 
 ; game-board is the board used in the game with the
@@ -545,6 +549,125 @@
 
 
 
+; Tree node structure (for AI movements)
+;(define-struct t-node (movement alpha beta value children))
+(define-struct t-node (movement children))
+
+(define-struct movement (initial-n-num changed-n-num))
+
+
+
+
+
+; ejemplo de un nodo del arbol
+#|
+(get-node 2 (board-n-1 game-board))
+(define first-node searched-node)
+(get-node 3 (board-n-1 game-board))
+(define second-node searched-node)
+(define minimap-root (make-t-node
+  (make-movement first-node second-node)
+  (generate-children 2)))
+|#
+
+;generate tree
+
+(define (generate-tree prev-node-num prev-node next-node children)
+  (make-t-node
+   (make-movement prev-node next-node))
+   (generate-children prev-node-num))
+
+(define empty-tree
+  (make-t-node (make-movement node-0 node-0) '()))
+
+; name: GENERATE CHILDREN
+; description: this function receives a number of a node a returns all the posible
+;  movements that it can have.
+; input: number -> the number of the node to analyse.
+; output: a list with all the possible numbers for a given node, with the form
+;  '( (initial-node end-node1) (initial-node end-node2) .... (initial-node end-nodex)) each element of the list
+; corresponds to a possible movement
+(define (generate-children number)
+  (get-node number (board-n-1 game-board))
+  (generate-children-aux searched-node (deliver-options number)))
+
+; auxiliar function of the generate children
+(define (generate-children-aux first-node list1)
+  (cond ( (empty? list1)
+          '())
+        ( else
+          (get-node (car list1) (board-n-1 game-board))
+          (define x-node searched-node)
+          (define list-move (list first-node searched-node))
+          (append (list list-move)
+                (generate-children-aux first-node(cdr list1))))))
+
+; name: GENERATE ALL CHILDREN
+; description: this function gets all the possible movements on the given board for
+;   ai or for the user.
+; input: mov-type -> this is the movement that we would like to consider, either if it is an movement
+;   of the ai or of the user.
+;        node-num -> this is just a counter to consider all the nodes, since the board has 49 postitions, this value has to be
+;        49 in order to analyse the entire board. 
+(define (generate-all-children mov-type node-num)
+  (get-node node-num (board-n-1 game-board))
+          ; if node-num is 0 it means that the analysis finished
+  (cond ( (equal? node-num 0)
+          '())
+        ; if the node to consider corresponds to one of the same movement type then it has to be analysed.
+        ( (equal? (node-state searched-node) mov-type)
+          (append (generate-children node-num) (generate-all-children mov-type (- node-num 1))))
+        ; if the node to consider is not of the type needed it just ignores the analysis for it
+        ( else
+          (append '() (generate-all-children mov-type (- node-num 1))))))
+
+; name: GET CHILDREN
+; description: this function returns the children that the can be obtained from the current board
+(define (get-children mov-type node-num)
+  (display "d"))
+  
+
+
+; name: AI MOVEMENT TREE
+; description: this function creates the board tree for the
+;    AI to take the decision
+
+; input: depth -> the depth of analysis of the minimax algorithm expected
+;    (the idea is to only have even numbers here because the analysis always
+;    considers couples of movements, the one from the ai and the one from the player.
+;   first-node -> corresponds to the node that had the tile before the movement.
+;   last-node  -> corresopnds to the node that will have the tile after the movement.
+
+; note: for the first movement it is convenient to use the first-node as the node-0 porque en este caso no hay movimiento, es el tablero inicial
+
+; output: the complete tree that will be analysed with the minimax algorithm
+(define (ai-movement-tree depth first-node last-node)
+  (cond ( (equal? depth 0)
+          empty-tree)
+        ( else
+          (make-t-node
+           (make-movement first-node last-node)
+           (get-children "ai")))))
+
+           
+          
+
+; AI movement
+
+#|
+(define (ai-movement depth)
+  ; first the game tree has to be generated
+  (ai-movement-tree depth)
+
+  ; second minimax algorithm has to be applied
+  (minimax-tree)
+
+  ; third execute the chosen movement
+  (execute movement))
+
+|#
+
+; Tree structure
 
 ; ########################
 ; ## IMPORTANTE ##

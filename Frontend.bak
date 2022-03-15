@@ -16,6 +16,8 @@
                        [alignment '(left top)]))
 
 
+; ## CONSTANTS ##
+
 ; button images
 (define button-image-blue (read-bitmap "Images/blue-circle.png"))
 (define button-image-red (read-bitmap "Images/red-circle.png"))
@@ -23,29 +25,114 @@
 (define button-image-green (read-bitmap "Images/green-circle.png"))
 (define button-image-gray (read-bitmap "Images/gray-circle.png"))
 
-; button methods
+; ## VARIABLES ##
 
-; name: get button number
+; flag for a piece that is in movement
+(define in-movement #f)
+
+; ## FUNCTIONS ##
+
+; name: GET BUTTON NUMBER
 ; description: returns the number of a given button
-; input: the button to search and a list with all the buttons
+
+; input: the button to search and a list with all the buttons,
+;   also a counter (because the method is recursive
 ; output: an integer with the number of the button
 (define (get-button-number button list cont)
   (cond ( (empty? list)
           (display "button not found"))
-       
+
         ( (equal? button (object-list-current list))
-          (display cont))
+          cont)
         
         ( else
           (get-button-number button (object-list-next list) (+ cont 1)))))
 
+; name: GET BUTTON FROM NUMBER
+; description: searches for a button based on its number.
 
+; input: list with all the buttons, a counter (because the function is recursive)
+;   and the number if the button.
+; output: a button.
+(define (get-button-from-number list cont number)
+  (cond ( (empty? list)
+          (display "button not found"))
+       
+        ( (equal? number cont)
+          (object-list-current list))
+        
+        ( else
+          (get-button-from-number (object-list-next list) (+ cont 1) number))))
+
+; name: GET BUTTON FROM COLOR
+; description: searches for a button based on its color (returns first coincidence).
+
+; input: list with all the buttons, a counter (because the function is recursive)
+;   and the color of the button.
+; output: a button.
+(define (get-button-from-color list color)
+  (cond ( (empty? list)
+          (display "button not found"))
+       
+        ( (equal? (send (object-list-current list) get-label) color)
+          (object-list-current list))
+        
+        ( else
+          (get-button-from-color (object-list-next list) color))))
+
+; name: BUTTON RESPONSE
+; description: this function is the main function when a button
+;    from the board is pressed.
+
+; input: the button pressed
 (define (button-response button event)
-  (cond ( (or (equal? (send button get-label) button-image-red)
-              (equal? (send button get-label) button-image-green))
-          (deliver-options (get-button-number button button-list-1-2 1)))))
+  
+          ; if a red button is pressed and the user is not in movement and
+  ; displays all the possible movements.
+  (cond ( (and (equal? (send button get-label) button-image-red) (not in-movement))
+          (set! in-movement #t)
+          (send button set-label button-image-blue)
+          (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-pink))
 
-;(send button set-label button-image-red))
+        ; if a pink button is pressed and the user is in movement and moves the selected
+        ; tile to the pressed position.
+        ( (and (equal? (send button get-label) button-image-pink) in-movement)
+          (set! in-movement #f)
+          (define previous-button (get-button-from-color button-list-1-2 button-image-blue))
+          (color-options (deliver-options (get-button-number previous-button button-list-1-2 1)) button-image-gray)
+          (send previous-button set-label button-image-gray)
+          (send previous-button enable #f)
+          (change-state (get-button-number previous-button button-list-1-2 1) "free")
+          (send button set-label button-image-red)
+          (send button enable #t)
+          (change-state (get-button-number button button-list-1-2 1) "user"))
+
+        ; if a blue button is pressed and the user is in movement and cancels the movement by
+        ; deleting the movement options
+        ( (and (equal? (send button get-label) button-image-blue) in-movement)
+          (set! in-movement #f)
+          (send button set-label button-image-red)
+          (color-options (deliver-options (get-button-number button button-list-1-2 1)) button-image-gray))))
+          
+
+; name: COLOR OPTIONS
+; description: colors a given list of nodes (the list has the numbers of the buttons)
+;   with the indicated color.
+
+; input: list with the number of the buttons, and the color needed
+(define (color-options list color)
+  (cond ( (empty? list))
+        ( else
+          ; if the color is pink the buttons have to be enabled
+          ; if the color is gray the buttons have to be disabled
+          (cond ( (equal? color button-image-pink)
+                  (send (get-button-from-number button-list-1-2 1 (car list)) enable #t))
+                 ( (equal? color button-image-gray)
+                  (send (get-button-from-number button-list-1-2 1 (car list)) enable #f)))
+          
+          (send (get-button-from-number button-list-1-2 1 (car list)) set-label color)
+          (color-options (cdr list) color))))
+ 
 
 ; ### PANELS ###
 
