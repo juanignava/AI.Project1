@@ -648,8 +648,23 @@
 
 ; name: GET CHILDREN
 ; description: this function returns the children that the can be obtained from the current board
-(define (get-children mov-type node-num)
-  (display "d"))
+(define (get-children mov-type depth children-list)
+  (cond ( (empty? children-list)
+          '())
+
+        ; analyse the cases with the movment type
+        ; in both cases return the 
+        ( else
+          (cond ( (equal? mov-type "ai")
+                  (append (list (ai-movement-tree (- depth 1) "user" (caar children-list) (cadar children-list)))
+                          (get-children mov-type depth (cdr children-list))))
+
+                ( (equal? mov-type "user")
+                  (append (list (ai-movement-tree (- depth 1) "ai" (caar children-list) (cadar children-list)))
+                          (get-children mov-type depth (cdr children-list))))))))
+                  
+          
+          
   
 
 
@@ -666,13 +681,38 @@
 ; note: for the first movement it is convenient to use the first-node as the node-0 porque en este caso no hay movimiento, es el tablero inicial
 
 ; output: the complete tree that will be analysed with the minimax algorithm
-(define (ai-movement-tree depth first-node last-node)
+
+;for the first call (ai-movement-tree 4 "ai" node-0 node-0)
+
+(define (ai-movement-tree depth mov-type first-node last-node)
+  (display "\n")
+  (display "last node number: ")
+  (display (node-number last-node))
+  (display "\n")
+  
+  ; first make the movement of the node (consider the case where it is not necessary)
+  (cond ( (not (equal? first-node node-0))
+          (define transitory-state (node-state first-node))
+          (change-state (node-number first-node) (node-state last-node))
+          (change-state (node-state last-node) transitory-state)))
+  
+  ; second make the tree
+  (define return '())
   (cond ( (equal? depth 0)
-          empty-tree)
+          (set! return empty-tree))
         ( else
-          (make-t-node
+          (set! return (make-t-node
            (make-movement first-node last-node)
-           (get-children "ai")))))
+           (get-children mov-type depth (filter-children (generate-all-children mov-type 49) mov-type))))))
+  
+  ; third make the movement backwards
+  (cond ( (not (equal? first-node node-0))
+          (define transitory-state (node-state first-node))
+          (change-state (node-number first-node) (node-state last-node))
+          (change-state (node-state last-node) transitory-state)))
+  ;return the tree
+  return)
+
 
            
           
