@@ -692,9 +692,10 @@
   
   ; first make the movement of the node (consider the case where it is not necessary)
   (cond ( (not (equal? first-node node-0))
+          (display "here")
           (define transitory-state (node-state first-node))
           (change-state (node-number first-node) (node-state last-node))
-          (change-state (node-state last-node) transitory-state)))
+          (change-state (node-number last-node) transitory-state)))
   
   ; second make the tree
   (define return '())
@@ -709,7 +710,7 @@
   (cond ( (not (equal? first-node node-0))
           (define transitory-state (node-state first-node))
           (change-state (node-number first-node) (node-state last-node))
-          (change-state (node-state last-node) transitory-state)))
+          (change-state (node-number last-node) transitory-state)))
   ;return the tree
   return)
 
