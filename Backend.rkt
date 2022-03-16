@@ -643,12 +643,33 @@
                   (append (list (car list1)) (filter-children (cdr list1) mov-type)))
                 ( else
                   (append '() (filter-children (cdr list1) mov-type)))))))
-        
+
+; name: FILTER CHILDREN RANDOM
+; description: since the number of children grows exponencially is becomes necessary
+;   to get just some of the options we have in order to get a better depth in the minimax
+;   algorithm.
+
+; input: list1 corresponds to the list of options in the movements. In this case it is the
+;   restul of the filter-children function.
+; coutner: since the function is recursive, this parameter allows to get information about
+;   the last process.
+(define (filter-children-random i-depth list1 counter)
+  (cond ( (empty? list1)
+          '())
+        ( (equal? (remainder counter (quotient i-depth 1)) 0)
+          (append (list (car list1)) (filter-children-random i-depth (cdr list1) (+ counter 1))))
+        ( else
+          (append '() (filter-children-random i-depth (cdr list1) (+ counter 1))))))
            
+; name: FILTER CHILDREN AUX
+; description: auxiliar function to callthe filter children functions
+(define (filter-children-aux i-depth mov-type)
+  (filter-children-random  i-depth (filter-children (generate-all-children mov-type 49) mov-type) 0))
+  
 
 ; name: GET CHILDREN
 ; description: this function returns the children that the can be obtained from the current board
-(define (get-children mov-type depth children-list)
+(define (get-children mov-type i-depth depth children-list)
   (cond ( (empty? children-list)
           '())
 
@@ -656,12 +677,12 @@
         ; in both cases return the 
         ( else
           (cond ( (equal? mov-type "ai")
-                  (append (list (ai-movement-tree (- depth 1) "user" (caar children-list) (cadar children-list)))
-                          (get-children mov-type depth (cdr children-list))))
+                  (append (list (ai-movement-tree i-depth (- depth 1) "user" (caar children-list) (cadar children-list)))
+                          (get-children mov-type i-depth depth (cdr children-list))))
 
                 ( (equal? mov-type "user")
-                  (append (list (ai-movement-tree (- depth 1) "ai" (caar children-list) (cadar children-list)))
-                          (get-children mov-type depth (cdr children-list))))))))
+                  (append (list (ai-movement-tree i-depth (- depth 1) "ai" (caar children-list) (cadar children-list)))
+                          (get-children mov-type i-depth depth (cdr children-list))))))))
                   
           
           
@@ -682,9 +703,9 @@
 
 ; output: the complete tree that will be analysed with the minimax algorithm
 
-;for the first call (ai-movement-tree 4 "ai" node-0 node-0)
+;for the first call (ai-movement-tree 4 4 "ai" node-0 node-0)
 
-(define (ai-movement-tree depth mov-type first-node last-node)
+(define (ai-movement-tree i-depth depth mov-type first-node last-node)
   (display "\n")
   (display "last node number: ")
   (display (node-number last-node))
@@ -704,7 +725,7 @@
         ( else
           (set! return (make-t-node
            (make-movement first-node last-node)
-           (get-children mov-type depth (filter-children (generate-all-children mov-type 49) mov-type))))))
+           (get-children mov-type i-depth depth (filter-children-aux i-depth mov-type))))))
   
   ; third make the movement backwards
   (cond ( (not (equal? first-node node-0))
