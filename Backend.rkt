@@ -551,9 +551,9 @@
 
 ; Tree node structure (for AI movements)
 ;(define-struct t-node (movement alpha beta value children))
-(define-struct t-node (movement children))
+(define-struct t-node (movement alpha beta value children)  #:mutable)
 
-(define-struct movement (initial-n-num changed-n-num))
+(define-struct movement (initial-n changed-n))
 
 
 
@@ -578,7 +578,7 @@
    (generate-children prev-node-num))
 
 (define empty-tree
-  (make-t-node (make-movement node-0 node-0) '()))
+  (make-t-node (make-movement node-0 node-0) -1000 1000 -1000  '()))
 
 ; name: GENERATE CHILDREN
 ; description: this function receives a number of a node a returns all the posible
@@ -706,14 +706,9 @@
 ;for the first call (ai-movement-tree 4 4 "ai" node-0 node-0)
 
 (define (ai-movement-tree i-depth depth mov-type first-node last-node)
-  (display "\n")
-  (display "last node number: ")
-  (display (node-number last-node))
-  (display "\n")
   
   ; first make the movement of the node (consider the case where it is not necessary)
   (cond ( (not (equal? first-node node-0))
-          (display "here")
           (define transitory-state (node-state first-node))
           (change-state (node-number first-node) (node-state last-node))
           (change-state (node-number last-node) transitory-state)))
@@ -725,6 +720,9 @@
         ( else
           (set! return (make-t-node
            (make-movement first-node last-node)
+           -1000
+           1000
+           -1000
            (get-children mov-type i-depth depth (filter-children-aux i-depth mov-type))))))
   
   ; third make the movement backwards
@@ -736,8 +734,130 @@
   return)
 
 
-           
+; name: CALCULATE HEURISTIC
+; desciption: this function recursively calculates an heuristic that determines how good
+;  a board is. Based on this heuristic of the multiple boards the AI will decide
+;  the next movement.
+
+; input: node-num -> corresponds to the number of the node that is being analysed, the idea
+;   is to consider the values of all nodes so it passes throught all of them.
+(define (calculate-heuristic node-num)
+  (cond ( (equal? node-num 0)
+          0)
+        ( else
+          (get-node node-num (board-n-1 game-board))
+          (cond ( (equal? (node-state searched-node) "ai")
+                  (+ (* 2 (node-depth searched-node)) (calculate-heuristic (- node-num 1))))
+                ( (equal? (node-state searched-node) "user")
+                  (+ (* -1 (- 13 (node-depth searched-node))) (calculate-heuristic (- node-num 1))))
+                ( else
+                  (+ 0 (calculate-heuristic (- node-num 1))))))))
+
+(define return 0)
+(define (minimax-aux mov-type tree children)
+  (define obtained-value 0)
+  (cond ( (not (equal? children '()))
+    
           
+          ; in case we are doing a "ai" movement
+          (cond ( (equal? "ai" mov-type)
+                  (set! obtained-value (minimax (t-node-alpha tree) (t-node-beta tree) "user" (car children)))
+                  (display "\n value obtained ai: ")
+                  (display obtained-value)
+                  (cond ( (< (t-node-alpha tree) obtained-value)
+                          (set-t-node-alpha! tree obtained-value)
+                          (set-t-node-value! tree obtained-value))
+                        ( else
+                          (set-t-node-value! tree obtained-value)))
+                  (cond ( (< (t-node-value tree) (t-node-beta tree))
+                          (minimax-aux mov-type tree (cdr children)))))
+
+                ( (equal? "user" mov-type)
+                  (set! obtained-value (minimax (t-node-alpha tree) (t-node-beta tree) "ai" (car children)))
+                  (display "value obtained user: ")
+                  (display obtained-value)
+                  (cond ( (> (t-node-beta tree) obtained-value)
+                          (set-t-node-beta! tree obtained-value)
+                          (set-t-node-value! tree obtained-value))
+                        ( else
+                          (set-t-node-value! tree obtained-value)))
+                  (cond ( (> (t-node-value tree) (t-node-alpha tree))
+                          (minimax-aux mov-type tree (cdr children))))))
+          
+          obtained-value)))
+                        
+                  
+          
+          
+
+; name: MINIMAX
+; desciption: this algorithm calculates the next movement using
+;  the minimax algorithm.
+; input: tree -> corresponds to the tree of movements in the actual board
+;     mov-type -> the type of analysys "ai" or for "user"
+
+; nota: para probar: (minimax -1000 1000 "ai" tree), (ai-movement-tree 6 6 "ai" node-0 node-0)
+; donde en vez de tree se pone 
+
+; HACE FALTA BUSCAR ALGUNA FORMA DE REFERENCIAR EL NODO DE LA SOLUCIÓN ENCONTRADA
+
+(define (minimax p-alpha p-beta mov-type tree)
+  (display "\n")
+  (display "NODE OF ANALYSIS INFORMATION: \n")
+  (display "Movement: (")
+  (display (node-number (movement-initial-n (t-node-movement tree))))
+  (display ", ")
+  (display (node-number (movement-changed-n (t-node-movement tree))))
+  (display ")")
+  (display "\n")
+  (display "Children: ")
+  (display (t-node-children tree))
+  (display "\n")
+  ; first make the movement to the current board
+  (cond ( (not (equal? (movement-initial-n (t-node-movement tree)) node-0))
+          (define transitory-state (node-state (movement-initial-n (t-node-movement tree))))
+          (change-state (node-number (movement-initial-n (t-node-movement tree))) (node-state (movement-changed-n (t-node-movement tree))))
+          (change-state (node-number (movement-changed-n (t-node-movement tree))) transitory-state)))
+
+  ; second do the tree traversal calculating the values
+  
+  (cond ( (or (equal? (car (t-node-children tree)) empty-tree) (equal? (t-node-children tree) '()))
+          (display (t-node-children tree))
+          (display "empty tree")
+          (set! return (calculate-heuristic 49)) ; calculate the board heuristic
+          (set-t-node-value! tree return))
+        ( else
+          (set-t-node-alpha! tree p-alpha)
+          (set-t-node-beta! tree p-beta)
+          (set! return (minimax-aux mov-type tree (t-node-children tree)))))
+  
+
+  ; third make the movement backwards
+  (cond ( (not (equal? (movement-initial-n (t-node-movement tree)) node-0))
+          (define transitory-state (node-state (movement-initial-n (t-node-movement tree))))
+          (change-state (node-number (movement-initial-n (t-node-movement tree))) (node-state (movement-changed-n (t-node-movement tree))))
+          (change-state (node-number (movement-changed-n (t-node-movement tree))) transitory-state)))
+
+  (display "\n")
+  (display "return number: ")
+  (display return)
+  (display "\n")
+  
+  return)
+
+
+(define (prueba cont)
+  (define return 0)
+  (cond ( (equal? cont 0)
+          (set! return 5))
+        ( else
+          (set! return (prueba (- cont 1)))))
+  return)
+        
+
+;(define-struct t-node (movement alpha beta value children))
+
+;(define-struct movement (initial-n changed-n))
 
 ; AI movement
 
