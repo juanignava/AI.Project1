@@ -11,7 +11,7 @@
 (define my-window (new frame%
                        [label "Chinese Checkers"]
                        [width 1200]
-                       [height 1000]
+                       [height 700]
                        [style '(no-resize-border)]
                        [alignment '(left top)]))
 
@@ -105,7 +105,8 @@
           (change-state (get-button-number previous-button button-list-1-2 1) "free")
           (send button set-label button-image-red)
           (send button enable #t)
-          (change-state (get-button-number button button-list-1-2 1) "user"))
+          (change-state (get-button-number button button-list-1-2 1) "user")
+          (ai-turn))
 
         ; if a blue button is pressed and the user is in movement and cancels the movement by
         ; deleting the movement options
@@ -133,6 +134,15 @@
           (send (get-button-from-number button-list-1-2 1 (car list)) set-label color)
           (color-options (cdr list) color))))
  
+; name: AI TURN
+; description: this is the base method for the AI to take
+;    the decision of the next movement. It calls other
+;    methods from the backend.
+
+(define (ai-turn)
+  (display "AI turn"))
+
+
 
 ; ### PANELS ###
 
@@ -140,8 +150,8 @@
 
 (define main-hor-pane (new horizontal-pane%
                         [parent my-window]
-                        [vert-margin 10]
-                        [horiz-margin 10]
+                        [vert-margin 00]
+                        [horiz-margin 00]
                         [alignment '(center center)]))
 
 (define vert-pane-1 (new vertical-pane%
@@ -260,8 +270,8 @@
 (define button-1 (new button%
                       [parent hor-pane-1]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -269,8 +279,8 @@
 (define button-2 (new button%
                       [parent hor-pane-2]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -278,8 +288,8 @@
 (define button-3 (new button%
                       [parent hor-pane-2]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -287,8 +297,8 @@
 (define button-4 (new button%
                       [parent hor-pane-3]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -296,8 +306,8 @@
 (define button-5 (new button%
                       [parent hor-pane-3]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -305,8 +315,8 @@
 (define button-6 (new button%
                       [parent hor-pane-3]
                       [label button-image-green]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -314,8 +324,8 @@
 (define button-7 (new button%
                       [parent hor-pane-4]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -323,8 +333,8 @@
 (define button-8 (new button%
                       [parent hor-pane-4]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -332,8 +342,8 @@
 (define button-9 (new button%
                       [parent hor-pane-4]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -341,8 +351,8 @@
 (define button-10 (new button%
                       [parent hor-pane-4]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -350,8 +360,8 @@
 (define button-11 (new button%
                       [parent hor-pane-5]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -359,8 +369,8 @@
 (define button-12 (new button%
                       [parent hor-pane-5]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -368,8 +378,8 @@
 (define button-13 (new button%
                       [parent hor-pane-5]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -377,8 +387,8 @@
 (define button-14 (new button%
                       [parent hor-pane-5]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -386,8 +396,8 @@
 (define button-15 (new button%
                       [parent hor-pane-5]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -395,8 +405,8 @@
 (define button-16 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -404,8 +414,8 @@
 (define button-17 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -413,8 +423,8 @@
 (define button-18 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -422,8 +432,8 @@
 (define button-19 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -431,8 +441,8 @@
 (define button-20 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -440,8 +450,8 @@
 (define button-21 (new button%
                       [parent hor-pane-6]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -449,8 +459,8 @@
 (define button-22 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -458,8 +468,8 @@
 (define button-23 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -467,8 +477,8 @@
 (define button-24 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -476,8 +486,8 @@
 (define button-25 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -485,8 +495,8 @@
 (define button-26 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -494,8 +504,8 @@
 (define button-27 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -503,8 +513,8 @@
 (define button-28 (new button%
                       [parent hor-pane-7]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -512,8 +522,8 @@
 (define button-29 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -521,8 +531,8 @@
 (define button-30 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -530,8 +540,8 @@
 (define button-31 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -539,8 +549,8 @@
 (define button-32 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -548,8 +558,8 @@
 (define button-33 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -557,8 +567,8 @@
 (define button-34 (new button%
                       [parent hor-pane-8]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -566,8 +576,8 @@
 (define button-35 (new button%
                       [parent hor-pane-9]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -575,8 +585,8 @@
 (define button-36 (new button%
                       [parent hor-pane-9]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -584,8 +594,8 @@
 (define button-37 (new button%
                       [parent hor-pane-9]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -593,8 +603,8 @@
 (define button-38 (new button%
                       [parent hor-pane-9]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -602,8 +612,8 @@
 (define button-39 (new button%
                       [parent hor-pane-9]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -611,8 +621,8 @@
 (define button-40 (new button%
                       [parent hor-pane-10]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -620,8 +630,8 @@
 (define button-41 (new button%
                       [parent hor-pane-10]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -629,8 +639,8 @@
 (define button-42 (new button%
                       [parent hor-pane-10]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -638,8 +648,8 @@
 (define button-43 (new button%
                       [parent hor-pane-10]
                       [label button-image-gray]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #f]))
@@ -647,8 +657,8 @@
 (define button-44 (new button%
                       [parent hor-pane-11]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -656,8 +666,8 @@
 (define button-45 (new button%
                       [parent hor-pane-11]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -665,8 +675,8 @@
 (define button-46 (new button%
                       [parent hor-pane-11]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -674,8 +684,8 @@
 (define button-47 (new button%
                       [parent hor-pane-12]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -683,8 +693,8 @@
 (define button-48 (new button%
                       [parent hor-pane-12]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))
@@ -692,8 +702,8 @@
 (define button-49 (new button%
                       [parent hor-pane-13]
                       [label button-image-red]
-                      [min-width 30]
-                      [min-height 30]
+                      [min-width 20]
+                      [min-height 20]
                       [font (make-object font% 15 'default 'normal 'normal)]
                       [callback button-response]
                       [enabled #t]))

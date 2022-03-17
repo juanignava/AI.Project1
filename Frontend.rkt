@@ -30,6 +30,8 @@
 ; flag for a piece that is in movement
 (define in-movement #f)
 
+(define chosen-depth 1)
+
 ; ## FUNCTIONS ##
 
 ; name: GET BUTTON NUMBER
@@ -106,6 +108,8 @@
           (send button set-label button-image-red)
           (send button enable #t)
           (change-state (get-button-number button button-list-1-2 1) "user")
+
+          ; execute the ai turn
           (ai-turn))
 
         ; if a blue button is pressed and the user is in movement and cancels the movement by
@@ -140,7 +144,15 @@
 ;    methods from the backend.
 
 (define (ai-turn)
-  (display "AI turn"))
+  (define movement (ai-movement chosen-depth))
+
+  ; color past position gray
+  (send (get-button-from-number button-list-1-2 1 (car movement)) enable #f)
+  (send (get-button-from-number button-list-1-2 1 (car movement)) set-label button-image-gray)
+
+  ; color new position green
+  (send (get-button-from-number button-list-1-2 1 (cadr movement)) enable #t)
+  (send (get-button-from-number button-list-1-2 1 (cadr movement)) set-label button-image-green))
 
 
 
