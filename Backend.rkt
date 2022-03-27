@@ -17,7 +17,7 @@
 ;        nn-dr -> down right neighbor
 ;        nn-dl -> down left neighbor
 ;        nn-l  -> left neighbor
-(define-struct node (number state depth nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
+(define-struct node (number state depth central nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
 
 
 ; board structure
@@ -31,62 +31,62 @@
 
 
 (define node-0
-  (make-node 0 "free" 0 '() '() '() '() '() '()))
+  (make-node 0 "free" 0 0 '() '() '() '() '() '()))
 
 ; ## VARIABLES ##
 
 ; game-board is the board used in the game with the
 ;   definition of all its nodes.
 (define game-board (make-board
-  (make-node 1 "ai" 1 '() '() '() '() '() '())
-  (make-node 2 "ai" 2 '() '() '() '() '() '())
-  (make-node 3 "ai" 2 '() '() '() '() '() '())
-  (make-node 4 "ai" 3 '() '() '() '() '() '())
-  (make-node 5 "ai" 3 '() '() '() '() '() '())
-  (make-node 6 "ai" 3 '() '() '() '() '() '())
-  (make-node 7 "free" 4 '() '() '() '() '() '())
-  (make-node 8 "free" 4 '() '() '() '() '() '())
-  (make-node 9 "free" 4 '() '() '() '() '() '())
-  (make-node 10 "free" 4 '() '() '() '() '() '())
-  (make-node 11 "free" 5 '() '() '() '() '() '())
-  (make-node 12 "free" 5 '() '() '() '() '() '())
-  (make-node 13 "free" 5 '() '() '() '() '() '())
-  (make-node 14 "free" 5 '() '() '() '() '() '())
-  (make-node 15 "free" 5 '() '() '() '() '() '())
-  (make-node 16 "free" 6 '() '() '() '() '() '())
-  (make-node 17 "free" 6 '() '() '() '() '() '())
-  (make-node 18 "free" 6 '() '() '() '() '() '())
-  (make-node 19 "free" 6 '() '() '() '() '() '())
-  (make-node 20 "free" 6 '() '() '() '() '() '())
-  (make-node 21 "free" 6 '() '() '() '() '() '())
-  (make-node 22 "free" 7 '() '() '() '() '() '())
-  (make-node 23 "free" 7 '() '() '() '() '() '())
-  (make-node 24 "free" 7 '() '() '() '() '() '())
-  (make-node 25 "free" 7 '() '() '() '() '() '())
-  (make-node 26 "free" 7 '() '() '() '() '() '())
-  (make-node 27 "free" 7 '() '() '() '() '() '())
-  (make-node 28 "free" 7 '() '() '() '() '() '())
-  (make-node 29 "free" 8 '() '() '() '() '() '())
-  (make-node 30 "free" 8 '() '() '() '() '() '())
-  (make-node 31 "free" 8 '() '() '() '() '() '())
-  (make-node 32 "free" 8 '() '() '() '() '() '())
-  (make-node 33 "free" 8 '() '() '() '() '() '())
-  (make-node 34 "free" 8 '() '() '() '() '() '())
-  (make-node 35 "free" 9 '() '() '() '() '() '())
-  (make-node 36 "free" 9 '() '() '() '() '() '())
-  (make-node 37 "free" 9 '() '() '() '() '() '())
-  (make-node 38 "free" 9 '() '() '() '() '() '())
-  (make-node 39 "free" 9 '() '() '() '() '() '())
-  (make-node 40 "free" 10 '() '() '() '() '() '())
-  (make-node 41 "free" 10 '() '() '() '() '() '())
-  (make-node 42 "free" 10 '() '() '() '() '() '())
-  (make-node 43 "free" 10 '() '() '() '() '() '())
-  (make-node 44 "user" 11 '() '() '() '() '() '())
-  (make-node 45 "user" 11 '() '() '() '() '() '())
-  (make-node 46 "user" 11 '() '() '() '() '() '())
-  (make-node 47 "user" 12 '() '() '() '() '() '())
-  (make-node 48 "user" 12 '() '() '() '() '() '())
-  (make-node 49 "user" 13 '() '() '() '() '() '())))  
+  (make-node 1 "ai" 1 3 '() '() '() '() '() '())
+  (make-node 2 "ai" 2 3 '() '() '() '() '() '())
+  (make-node 3 "ai" 2 3 '() '() '() '() '() '())
+  (make-node 4 "ai" 3 2 '() '() '() '() '() '())
+  (make-node 5 "ai" 3 3 '() '() '() '() '() '())
+  (make-node 6 "ai" 3 2 '() '() '() '() '() '())
+  (make-node 7 "free" 4 1 '() '() '() '() '() '())
+  (make-node 8 "free" 4 3 '() '() '() '() '() '())
+  (make-node 9 "free" 4 3 '() '() '() '() '() '())
+  (make-node 10 "free" 4 1 '() '() '() '() '() '())
+  (make-node 11 "free" 5 1 '() '() '() '() '() '())
+  (make-node 12 "free" 5 2 '() '() '() '() '() '())
+  (make-node 13 "free" 5 3 '() '() '() '() '() '())
+  (make-node 14 "free" 5 2 '() '() '() '() '() '())
+  (make-node 15 "free" 5 1 '() '() '() '() '() '())
+  (make-node 16 "free" 6 1'() '() '() '() '() '())
+  (make-node 17 "free" 6 2 '() '() '() '() '() '())
+  (make-node 18 "free" 6 2 '() '() '() '() '() '())
+  (make-node 19 "free" 6 2 '() '() '() '() '() '())
+  (make-node 20 "free" 6 2 '() '() '() '() '() '())
+  (make-node 21 "free" 6 1 '() '() '() '() '() '())
+  (make-node 22 "free" 7 1 '() '() '() '() '() '())
+  (make-node 23 "free" 7 2 '() '() '() '() '() '())
+  (make-node 24 "free" 7 2 '() '() '() '() '() '())
+  (make-node 25 "free" 7 3 '() '() '() '() '() '())
+  (make-node 26 "free" 7 2 '() '() '() '() '() '())
+  (make-node 27 "free" 7 2 '() '() '() '() '() '())
+  (make-node 28 "free" 7 1 '() '() '() '() '() '())
+  (make-node 29 "free" 8 1 '() '() '() '() '() '())
+  (make-node 30 "free" 8 2 '() '() '() '() '() '())
+  (make-node 31 "free" 8 2 '() '() '() '() '() '())
+  (make-node 32 "free" 8 2 '() '() '() '() '() '())
+  (make-node 33 "free" 8 2 '() '() '() '() '() '())
+  (make-node 34 "free" 8 1 '() '() '() '() '() '())
+  (make-node 35 "free" 9 1 '() '() '() '() '() '())
+  (make-node 36 "free" 9 2 '() '() '() '() '() '())
+  (make-node 37 "free" 9 3 '() '() '() '() '() '())
+  (make-node 38 "free" 9 2 '() '() '() '() '() '())
+  (make-node 39 "free" 9 1 '() '() '() '() '() '())
+  (make-node 40 "free" 10 1'() '() '() '() '() '())
+  (make-node 41 "free" 10 3 '() '() '() '() '() '())
+  (make-node 42 "free" 10 3'() '() '() '() '() '())
+  (make-node 43 "free" 10 1 '() '() '() '() '() '())
+  (make-node 44 "user" 11 2'() '() '() '() '() '())
+  (make-node 45 "user" 11 3 '() '() '() '() '() '())
+  (make-node 46 "user" 11 2 '() '() '() '() '() '())
+  (make-node 47 "user" 12 3 '() '() '() '() '() '())
+  (make-node 48 "user" 12 3 '() '() '() '() '() '())
+  (make-node 49 "user" 13 3 '() '() '() '() '() '())))  
 
 ; Define the connections in the board
 
@@ -473,7 +473,7 @@
 
         ; control the consecutive blocks
         ( (equal? cont-b 2))
-        ( (equal? cont-f 2))
+        ( (equal? cont-f 1))
         ( else
 
           ; case in which the direction is ul or all
@@ -675,15 +675,16 @@
 (define (filter-children-aux i-depth mov-type)
 
   ; get all the possible children list (filtered and not filtered)
-  (define all-children-list (generate-all-children mov-type 49))
+  (define all-children-list-ns (generate-all-children mov-type 49))
+  (define all-children-list (shuffle all-children-list-ns))
   (define filtered-children-list (filter-children all-children-list mov-type))
   (define random-filtered-children-list (filter-children-random  i-depth filtered-children-list 0))
 
   ; define which list to use based on the availabilty
-  (cond ( (or (< (len all-children-list) 9) (equal? (len filtered-children-list) 0))
+  (cond ( (or (< (len all-children-list) 7) (equal? (len filtered-children-list) 0))
           all-children-list)
         
-        ( (or (< (len filtered-children-list) 9) (equal? (len random-filtered-children-list) 0))
+        ( (or (< (len filtered-children-list) 7) (equal? (len random-filtered-children-list) 0))
           filtered-children-list)
         
         ( else
@@ -774,9 +775,9 @@
         ( else
           (get-node node-num (board-n-1 game-board))
           (cond ( (equal? (node-state searched-node) "ai")
-                  (+ (* 2 (node-depth searched-node)) (calculate-heuristic (- node-num 1))))
+                  (+ (* 2 (node-depth searched-node)) (node-central searched-node) (calculate-heuristic (- node-num 1))))
                 ( (equal? (node-state searched-node) "user")
-                  (+ (* -1 (- 13 (node-depth searched-node))) (calculate-heuristic (- node-num 1))))
+                  (+ (* -1 (- 13 (node-depth searched-node))) (* -1 (node-central searched-node)) (calculate-heuristic (- node-num 1))))
                 ( else
                   (+ 0 (calculate-heuristic (- node-num 1))))))))
 
