@@ -17,7 +17,7 @@
 ;        nn-dr -> down right neighbor
 ;        nn-dl -> down left neighbor
 ;        nn-l  -> left neighbor
-(define-struct node (number state nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
+(define-struct node (number state depth nn-ul nn-ur nn-r nn-dr nn-dl nn-l) #:mutable)
 
 
 ; board structure
@@ -30,62 +30,63 @@
                       n-41 n-42 n-43 n-44 n-45 n-46 n-47 n-48 n-49))
 
 
-
+(define node-0
+  (make-node 0 "free" 0 '() '() '() '() '() '()))
 
 ; ## VARIABLES ##
 
 ; game-board is the board used in the game with the
 ;   definition of all its nodes.
 (define game-board (make-board
-  (make-node 1 "ai" '() '() '() '() '() '())
-  (make-node 2 "ai" '() '() '() '() '() '())
-  (make-node 3 "ai" '() '() '() '() '() '())
-  (make-node 4 "ai" '() '() '() '() '() '())
-  (make-node 5 "ai" '() '() '() '() '() '())
-  (make-node 6 "ai" '() '() '() '() '() '())
-  (make-node 7 "free" '() '() '() '() '() '())
-  (make-node 8 "free" '() '() '() '() '() '())
-  (make-node 9 "free" '() '() '() '() '() '())
-  (make-node 10 "free" '() '() '() '() '() '())
-  (make-node 11 "free" '() '() '() '() '() '())
-  (make-node 12 "free" '() '() '() '() '() '())
-  (make-node 13 "free" '() '() '() '() '() '())
-  (make-node 14 "free" '() '() '() '() '() '())
-  (make-node 15 "free" '() '() '() '() '() '())
-  (make-node 16 "free" '() '() '() '() '() '())
-  (make-node 17 "free" '() '() '() '() '() '())
-  (make-node 18 "free" '() '() '() '() '() '())
-  (make-node 19 "free" '() '() '() '() '() '())
-  (make-node 20 "free" '() '() '() '() '() '())
-  (make-node 21 "free" '() '() '() '() '() '())
-  (make-node 22 "free" '() '() '() '() '() '())
-  (make-node 23 "free" '() '() '() '() '() '())
-  (make-node 24 "free" '() '() '() '() '() '())
-  (make-node 25 "free" '() '() '() '() '() '())
-  (make-node 26 "free" '() '() '() '() '() '())
-  (make-node 27 "free" '() '() '() '() '() '())
-  (make-node 28 "free" '() '() '() '() '() '())
-  (make-node 29 "free" '() '() '() '() '() '())
-  (make-node 30 "free" '() '() '() '() '() '())
-  (make-node 31 "free" '() '() '() '() '() '())
-  (make-node 32 "free" '() '() '() '() '() '())
-  (make-node 33 "free" '() '() '() '() '() '())
-  (make-node 34 "free" '() '() '() '() '() '())
-  (make-node 35 "free" '() '() '() '() '() '())
-  (make-node 36 "free" '() '() '() '() '() '())
-  (make-node 37 "free" '() '() '() '() '() '())
-  (make-node 38 "free" '() '() '() '() '() '())
-  (make-node 39 "free" '() '() '() '() '() '())
-  (make-node 40 "free" '() '() '() '() '() '())
-  (make-node 41 "free" '() '() '() '() '() '())
-  (make-node 42 "free" '() '() '() '() '() '())
-  (make-node 43 "free" '() '() '() '() '() '())
-  (make-node 44 "user" '() '() '() '() '() '())
-  (make-node 45 "user" '() '() '() '() '() '())
-  (make-node 46 "user" '() '() '() '() '() '())
-  (make-node 47 "user" '() '() '() '() '() '())
-  (make-node 48 "user" '() '() '() '() '() '())
-  (make-node 49 "user" '() '() '() '() '() '())))  
+  (make-node 1 "ai" 1 '() '() '() '() '() '())
+  (make-node 2 "ai" 2 '() '() '() '() '() '())
+  (make-node 3 "ai" 2 '() '() '() '() '() '())
+  (make-node 4 "ai" 3 '() '() '() '() '() '())
+  (make-node 5 "ai" 3 '() '() '() '() '() '())
+  (make-node 6 "ai" 3 '() '() '() '() '() '())
+  (make-node 7 "free" 4 '() '() '() '() '() '())
+  (make-node 8 "free" 4 '() '() '() '() '() '())
+  (make-node 9 "free" 4 '() '() '() '() '() '())
+  (make-node 10 "free" 4 '() '() '() '() '() '())
+  (make-node 11 "free" 5 '() '() '() '() '() '())
+  (make-node 12 "free" 5 '() '() '() '() '() '())
+  (make-node 13 "free" 5 '() '() '() '() '() '())
+  (make-node 14 "free" 5 '() '() '() '() '() '())
+  (make-node 15 "free" 5 '() '() '() '() '() '())
+  (make-node 16 "free" 6 '() '() '() '() '() '())
+  (make-node 17 "free" 6 '() '() '() '() '() '())
+  (make-node 18 "free" 6 '() '() '() '() '() '())
+  (make-node 19 "free" 6 '() '() '() '() '() '())
+  (make-node 20 "free" 6 '() '() '() '() '() '())
+  (make-node 21 "free" 6 '() '() '() '() '() '())
+  (make-node 22 "free" 7 '() '() '() '() '() '())
+  (make-node 23 "free" 7 '() '() '() '() '() '())
+  (make-node 24 "free" 7 '() '() '() '() '() '())
+  (make-node 25 "free" 7 '() '() '() '() '() '())
+  (make-node 26 "free" 7 '() '() '() '() '() '())
+  (make-node 27 "free" 7 '() '() '() '() '() '())
+  (make-node 28 "free" 7 '() '() '() '() '() '())
+  (make-node 29 "free" 8 '() '() '() '() '() '())
+  (make-node 30 "free" 8 '() '() '() '() '() '())
+  (make-node 31 "free" 8 '() '() '() '() '() '())
+  (make-node 32 "free" 8 '() '() '() '() '() '())
+  (make-node 33 "free" 8 '() '() '() '() '() '())
+  (make-node 34 "free" 8 '() '() '() '() '() '())
+  (make-node 35 "free" 9 '() '() '() '() '() '())
+  (make-node 36 "free" 9 '() '() '() '() '() '())
+  (make-node 37 "free" 9 '() '() '() '() '() '())
+  (make-node 38 "free" 9 '() '() '() '() '() '())
+  (make-node 39 "free" 9 '() '() '() '() '() '())
+  (make-node 40 "free" 10 '() '() '() '() '() '())
+  (make-node 41 "free" 10 '() '() '() '() '() '())
+  (make-node 42 "free" 10 '() '() '() '() '() '())
+  (make-node 43 "free" 10 '() '() '() '() '() '())
+  (make-node 44 "user" 11 '() '() '() '() '() '())
+  (make-node 45 "user" 11 '() '() '() '() '() '())
+  (make-node 46 "user" 11 '() '() '() '() '() '())
+  (make-node 47 "user" 12 '() '() '() '() '() '())
+  (make-node 48 "user" 12 '() '() '() '() '() '())
+  (make-node 49 "user" 13 '() '() '() '() '() '())))  
 
 ; Define the connections in the board
 
@@ -549,26 +550,17 @@
 
 
 ; Tree node structure (for AI movements)
-(define-struct t-node (movement children))
+;(define-struct t-node (movement alpha beta value children))
+(define-struct t-node (movement alpha beta value children best-child-mov)  #:mutable)
 
-(define-struct movement (initial-node changed-node))
+(define-struct movement (initial-n changed-n))
 
 
 
-(define (generate-children number)
-  (generate-children-aux (deliver-options number)))
 
-(define (generate-children-aux list1)
-  (cond ( (empty? list1)
-          '())
-        ( else
-          (get-node (car list1) (board-n-1 game-board))
-          (define x-node searched-node)
-          (append (list x-node)
-                (generate-children-aux (cdr list1))))))
 
 ; ejemplo de un nodo del arbol
-
+#|
 (get-node 2 (board-n-1 game-board))
 (define first-node searched-node)
 (get-node 3 (board-n-1 game-board))
@@ -576,33 +568,311 @@
 (define minimap-root (make-t-node
   (make-movement first-node second-node)
   (generate-children 2)))
-
-
-;generate tree
-#|
-(define (generate-tree number)
-  (set-t-node-movement! '() )
-  (set-t-node-children! (generate-children 2)))
 |#
 
-; Tree structure
+;generate tree
 
-; ########################
-; ## IMPORTANTE ##
-; para cambiar uno de los nodos:
-; (set-node-nn-5! (board-node-1 game-board) (board-node-2 game-board))
-; para probarlo:
-; (node-number (node-nn-5 (board-node-1 game-board)))
-; si a este nodo se le llega a cambiar algo, entonces los
+(define (generate-tree prev-node-num prev-node next-node children)
+  (make-t-node
+   (make-movement prev-node next-node))
+   (generate-children prev-node-num))
 
-; no es buena idea generar copias de la estructura porque altera los
-; nodos de la original, una idea es llevar una lista de los posibles
-; movimimentos (cambiar el state de los nodos a free y de free a ai)
-; eso se puede guardar en otra estructura
+(define empty-tree
+  (make-t-node (make-movement node-0 node-0) -1000 1000 -1000  '() (make-movement node-0 node-0)))
 
-; ########################
+; name: GENERATE CHILDREN
+; description: this function receives a number of a node a returns all the posible
+;  movements that it can have.
+; input: number -> the number of the node to analyse.
+; output: a list with all the possible numbers for a given node, with the form
+;  '( (initial-node end-node1) (initial-node end-node2) .... (initial-node end-nodex)) each element of the list
+; corresponds to a possible movement
+(define (generate-children number)
+  (get-node number (board-n-1 game-board))
+  (generate-children-aux searched-node (deliver-options number)))
 
+; auxiliar function of the generate children
+(define (generate-children-aux first-node list1)
+  (cond ( (empty? list1)
+          '())
+        ( else
+          (get-node (car list1) (board-n-1 game-board))
+          (define x-node searched-node)
+          (define list-move (list first-node searched-node))
+          (append (list list-move)
+                (generate-children-aux first-node(cdr list1))))))
 
+; name: GENERATE ALL CHILDREN
+; description: this function gets all the possible movements on the given board for
+;   ai or for the user.
+; input: mov-type -> this is the movement that we would like to consider, either if it is an movement
+;   of the ai or of the user.
+;        node-num -> this is just a counter to consider all the nodes, since the board has 49 postitions, this value has to be
+;        49 in order to analyse the entire board. 
+(define (generate-all-children mov-type node-num)
+  (get-node node-num (board-n-1 game-board))
+          ; if node-num is 0 it means that the analysis finished
+  (cond ( (equal? node-num 0)
+          '())
+        ; if the node to consider corresponds to one of the same movement type then it has to be analysed.
+        ( (equal? (node-state searched-node) mov-type)
+          (append (generate-children node-num) (generate-all-children mov-type (- node-num 1))))
+        ; if the node to consider is not of the type needed it just ignores the analysis for it
+        ( else
+          (append '() (generate-all-children mov-type (- node-num 1))))))
+
+; name: FILTER CHILDREN
+; desciption: this method filters the options of movements with just the ones that are allows
+;   moving forward (doesn't considers moving to the side or backwards)
+
+; input: list1 -> it corresponds to the list of all the possible movements in the current board
+;        mov-type -> indicates the type of the movement "ai" or "user" depending on who is moving the
+;        pieces this time.
+(define (filter-children list1 mov-type)
+  (cond ( (empty? list1)
+          '())
+        ; if the ai is moving, it only consider movements that make the tile move forward (a greater number of depth)
+        ( (equal? mov-type "ai")
+          (cond ( (< (node-depth (caar list1)) (node-depth (cadar list1)))
+                  (append (list (car list1)) (filter-children (cdr list1) mov-type)))
+                ( else
+                  (append '() (filter-children (cdr list1) mov-type)))))
+        ; if the user is moving, it only consider movements that make the tile move forward (a lesser number of depth)
+        ( (equal? mov-type "user")
+          (cond ( (> (node-depth (caar list1)) (node-depth (cadar list1)))
+                  (append (list (car list1)) (filter-children (cdr list1) mov-type)))
+                ( else
+                  (append '() (filter-children (cdr list1) mov-type)))))))
+
+; name: FILTER CHILDREN RANDOM
+; description: since the number of children grows exponencially is becomes necessary
+;   to get just some of the options we have in order to get a better depth in the minimax
+;   algorithm.
+
+; input: list1 corresponds to the list of options in the movements. In this case it is the
+;   restul of the filter-children function.
+; coutner: since the function is recursive, this parameter allows to get information about
+;   the last process.
+(define (filter-children-random i-depth list1 counter)
+  (cond ( (empty? list1)
+          '())
+        ( (equal? (remainder counter (quotient i-depth 1)) 0)
+          (append (list (car list1)) (filter-children-random i-depth (cdr list1) (+ counter 1))))
+        ( else
+          (append '() (filter-children-random i-depth (cdr list1) (+ counter 1))))))
+           
+; name: FILTER CHILDREN AUX
+; description: auxiliar function to callthe filter children functions
+(define (filter-children-aux i-depth mov-type)
+  (define children-list (filter-children (generate-all-children mov-type 49) mov-type) 0)
+  (cond ( (> (len children-list) 3)
+          (filter-children-random  i-depth children-list))
+        ( else
+          children-list)))
+  
+
+; name: GET CHILDREN
+; description: this function returns the children that the can be obtained from the current board
+(define (get-children mov-type i-depth depth children-list)
+  (cond ( (empty? children-list)
+          '())
+
+        ; analyse the cases with the movment type
+        ; in both cases return the 
+        ( else
+          (cond ( (equal? mov-type "ai")
+                  (append (list (ai-movement-tree i-depth (- depth 1) "user" (caar children-list) (cadar children-list)))
+                          (get-children mov-type i-depth depth (cdr children-list))))
+
+                ( (equal? mov-type "user")
+                  (append (list (ai-movement-tree i-depth (- depth 1) "ai" (caar children-list) (cadar children-list)))
+                          (get-children mov-type i-depth depth (cdr children-list))))))))
                   
+          
+          
   
+
+
+; name: AI MOVEMENT TREE
+; description: this function creates the board tree for the
+;    AI to take the decision
+
+; input: depth -> the depth of analysis of the minimax algorithm expected
+;    (the idea is to only have even numbers here because the analysis always
+;    considers couples of movements, the one from the ai and the one from the player.
+;   first-node -> corresponds to the node that had the tile before the movement.
+;   last-node  -> corresopnds to the node that will have the tile after the movement.
+
+; note: for the first movement it is convenient to use the first-node as the node-0 porque en este caso no hay movimiento, es el tablero inicial
+
+; output: the complete tree that will be analysed with the minimax algorithm
+
+;for the first call (ai-movement-tree 4 4 "ai" node-0 node-0)
+
+(define (ai-movement-tree i-depth depth mov-type first-node last-node)
   
+  ; first make the movement of the node (consider the case where it is not necessary)
+  (cond ( (not (equal? first-node node-0))
+          (define transitory-state (node-state first-node))
+          (change-state (node-number first-node) (node-state last-node))
+          (change-state (node-number last-node) transitory-state)))
+  
+  ; second make the tree
+  (define return '())
+  (cond ( (equal? depth 0)
+          (set! return empty-tree))
+        ( else
+          (set! return (make-t-node
+           (make-movement first-node last-node)
+           -1000
+           1000
+           -1000
+           (get-children mov-type i-depth depth (filter-children-aux i-depth mov-type))
+           '()))))
+  
+  ; third make the movement backwards
+  (cond ( (not (equal? first-node node-0))
+          (define transitory-state (node-state first-node))
+          (change-state (node-number first-node) (node-state last-node))
+          (change-state (node-number last-node) transitory-state)))
+  ;return the tree
+  return)
+
+
+; name: CALCULATE HEURISTIC
+; desciption: this function recursively calculates an heuristic that determines how good
+;  a board is. Based on this heuristic of the multiple boards the AI will decide
+;  the next movement.
+
+; input: node-num -> corresponds to the number of the node that is being analysed, the idea
+;   is to consider the values of all nodes so it passes throught all of them.
+
+; The heuristic: consider AI depths as positives and double them. Consider the USER depths as negatives.
+;  the AI depths are double to make the atacks more important than the defending.
+(define (calculate-heuristic node-num)
+  (cond ( (equal? node-num 0)
+          0)
+        ( else
+          (get-node node-num (board-n-1 game-board))
+          (cond ( (equal? (node-state searched-node) "ai")
+                  (+ (* 2 (node-depth searched-node)) (calculate-heuristic (- node-num 1))))
+                ( (equal? (node-state searched-node) "user")
+                  (+ (* -1 (- 13 (node-depth searched-node))) (calculate-heuristic (- node-num 1))))
+                ( else
+                  (+ 0 (calculate-heuristic (- node-num 1))))))))
+
+; name: MINIMAX-AUX
+; description: this auxiliar function of the analysis of the game tree corresponds to the analysis
+;    of the values of the end board results of the game. This part of the algorithm uses alpha-beta pruning
+;    to increase the performance of the algorithm.
+
+; input: tree -> the current tree in analysis
+;   children -> list of the children of the current tree (the analysis is made recursively).
+(define (minimax-aux mov-type tree children)
+  (define obtained-value 0)
+
+  ; stop the analysis if the tree has no more children.
+  (cond ( (not (equal? children '()))
+    
+                ; in case we are doing a "ai" movement -> the same as a MAX analysis
+          (cond ( (equal? "ai" mov-type)
+                  ; determine the value given by the child
+                  (set! obtained-value (minimax (t-node-alpha tree) (t-node-beta tree) "user" (car children)))
+
+                  ; if the value is greater then the alpha, then change the alpha and the value of the tree
+                  (cond ( (< (t-node-alpha tree) obtained-value)
+                          (set-t-node-alpha! tree obtained-value)
+                          (set-t-node-value! tree obtained-value)
+                          (set-t-node-best-child-mov! tree (t-node-movement (car children))))
+                        ( else
+                          (set-t-node-value! tree obtained-value)))
+
+                  ; if the beta es greater than the value of the tree, then analyse the next child
+                  ;    if not, don´t analyse the children. This is where the algorithm does the puning.
+                  (cond ( (< (t-node-value tree) (t-node-beta tree))
+                          (minimax-aux mov-type tree (cdr children)))))
+
+                ; in the case we are doing a "user" movement -> the same as a MIN analysis
+                ( (equal? "user" mov-type)
+                  ; determine the value given by the child
+                  (set! obtained-value (minimax (t-node-alpha tree) (t-node-beta tree) "ai" (car children)))
+
+                  ; if the value is lesser than beta, then change beta and the value of the tree
+                  (cond ( (> (t-node-beta tree) obtained-value)
+                          (set-t-node-beta! tree obtained-value)
+                          (set-t-node-value! tree obtained-value)
+                          (set-t-node-best-child-mov! tree (t-node-movement (car children))))
+                        ( else
+                          (set-t-node-value! tree obtained-value)))
+
+                  ; if the value is greater than the alpha, then analyse the next child
+                  ;    if not, don't analyse the rest of the children, this is where the algorithm does the puning.
+                  (cond ( (> (t-node-value tree) (t-node-alpha tree))
+                          (minimax-aux mov-type tree (cdr children))))))
+          
+          obtained-value)))
+                        
+; name: MINIMAX
+; desciption: this algorithm calculates the next movement using
+;  the minimax algorithm.
+; input: tree -> corresponds to the tree of movements in the actual board
+;     mov-type -> the type of analysys "ai" or for "user"
+(define return 0)
+(define (minimax p-alpha p-beta mov-type tree)
+
+  ; first make the movement to the current board
+  (cond ( (not (equal? (movement-initial-n (t-node-movement tree)) node-0))
+          (define transitory-state (node-state (movement-initial-n (t-node-movement tree))))
+          (change-state (node-number (movement-initial-n (t-node-movement tree))) (node-state (movement-changed-n (t-node-movement tree))))
+          (change-state (node-number (movement-changed-n (t-node-movement tree))) transitory-state)))
+
+  ; second do the tree traversal calculating the values
+
+  ; in the case that the tree childs correspond to an empty tree, calculate the heuristic.
+  (cond ( (or (equal? (car (t-node-children tree)) empty-tree) (equal? (t-node-children tree) '()))
+          (set! return (calculate-heuristic 49))
+          (set-t-node-value! tree return))
+
+        ; if the tree child is not an empty tree, then continue with the analysis of the children
+        ( else
+          (set-t-node-alpha! tree p-alpha)
+          (set-t-node-beta! tree p-beta)
+          (set! return (minimax-aux mov-type tree (t-node-children tree)))))
+  
+
+  ; third make the movement backwards
+  (cond ( (not (equal? (movement-initial-n (t-node-movement tree)) node-0))
+          (define transitory-state (node-state (movement-initial-n (t-node-movement tree))))
+          (change-state (node-number (movement-initial-n (t-node-movement tree))) (node-state (movement-changed-n (t-node-movement tree))))
+          (change-state (node-number (movement-changed-n (t-node-movement tree))) transitory-state)))
+
+  ; return the result (the heuristic needed)
+  return)
+
+; name: AI MOVEMENT
+; description: this function calls the main methods to get the alpha-beta puning minimax result
+;  of the game board.
+
+; input: depth -> the depth chosen by the user for the algorithm
+; output: A list of two items with the result of the movement. The list is composed by two numbers, the
+;  first one is the before movement node that had the AI tile and the second one is the after movement tile.
+(provide ai-movement)
+(define (ai-movement depth)
+
+  ; convert the depth to the one that works in the algorithm
+  (define mod-depth (+ (* 2 depth) 1))
+  ; get the game tree used by the analysis
+  (define game-tree (ai-movement-tree mod-depth mod-depth "ai" node-0 node-0))
+  ; calculate the best movement
+  (minimax -1000 1000 "ai" game-tree)
+  ; define the resultant movement
+  (define result-mov (t-node-best-child-mov game-tree))
+
+  ; make the changes to the game board
+  (define transitory-state (node-state (movement-initial-n result-mov)))
+  (change-state (node-number (movement-initial-n result-mov)) (node-state (movement-changed-n result-mov)))
+  (change-state (node-number (movement-changed-n result-mov)) transitory-state)
+
+  ; return list with just the number of the nodes to change in the frontend
+  (define return-list (list (node-number (movement-initial-n result-mov)) (node-number (movement-changed-n result-mov))))
+  return-list)

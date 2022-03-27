@@ -660,11 +660,41 @@
           (append (list (car list1)) (filter-children-random i-depth (cdr list1) (+ counter 1))))
         ( else
           (append '() (filter-children-random i-depth (cdr list1) (+ counter 1))))))
-           
+
+
+; name: LEN
+; description: returns the lenght of a list
+(define (len list)
+  (cond ( (empty? list)
+         0)
+       ( else
+         (+ 1 (len (cdr list))))))
+
 ; name: FILTER CHILDREN AUX
 ; description: auxiliar function to callthe filter children functions
 (define (filter-children-aux i-depth mov-type)
-  (filter-children-random  i-depth (filter-children (generate-all-children mov-type 49) mov-type) 0))
+
+  ; get all the possible children list (filtered and not filtered)
+  (define all-children-list (generate-all-children mov-type 49))
+  (define filtered-children-list (filter-children all-children-list mov-type))
+  (define random-filtered-children-list (filter-children-random  i-depth filtered-children-list 0))
+
+  ; define which list to use based on the availabilty
+  (cond ( (or (< (len all-children-list) 7) (equal? (len filtered-children-list) 0))
+          (display "\n")
+          (display "Used all children, the total is:")
+          (display (len all-children-list))
+          all-children-list)
+        ( (or (< (len filtered-children-list) 7) (equal? (len random-filtered-children-list) 0))
+          (display "\n")
+          (display "Used filtered children, the total is:")
+          (display (len filtered-children-list))
+          filtered-children-list)
+        ( else
+          (display "\n")
+          (display "Used random filtered children, the total is:")
+          (display (len random-filtered-children-list))
+          random-filtered-children-list)))
   
 
 ; name: GET CHILDREN
