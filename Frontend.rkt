@@ -144,6 +144,11 @@
 ;    methods from the backend.
 
 (define (ai-turn)
+
+  ; change the current turn message information
+  (send current-turn-message set-color (make-object color% "green"))
+  (send current-turn-message set-label "Current turn: AI    ")
+  
   (define movement (ai-movement chosen-depth))
 
   ; color past position gray
@@ -152,9 +157,70 @@
 
   ; color new position green
   (send (get-button-from-number button-list-1-2 1 (cadr movement)) enable #t)
-  (send (get-button-from-number button-list-1-2 1 (cadr movement)) set-label button-image-green))
+  (send (get-button-from-number button-list-1-2 1 (cadr movement)) set-label button-image-green)
 
+  ; change the current turn message information back to user
+  (send current-turn-message set-color (make-object color% "red"))
+  (send current-turn-message set-label "Current turn: User")
 
+  ; check the winer condition
+  (cond ( (equal? (check-winner) "ai")
+          ; case in which AI wins
+          (send current-turn-message set-color (make-object color% "green"))
+          (send current-turn-message set-label "The AI won!!!!")
+          (disable-board-buttons 1))
+
+        ( (equal? (check-winner) "user")
+          ; case in which User wins
+          (send current-turn-message set-color (make-object color% "red"))
+          (send current-turn-message set-label "You won!!!!")
+          (disable-board-buttons 1))))
+          
+
+; name: CHECK WINNER
+; description: this method checks if a player has won
+; output: a string that indicates the winner
+;   "ai" -> ai won
+;   "user" -> user won
+;   "no one" -> no one has wo
+(define (check-winner)
+  ( cond ( (check-winner-user 1)
+           "user")
+         ( (check-winner-ai 44)
+           "ai")
+         ( else
+           "no one")))
+  
+; auxiliar function of check winner - for user
+(define (check-winner-user cont)
+  ( cond ( (equal? cont 7)
+         #t)
+         ( (equal? (send (get-button-from-number button-list-1-2 1 cont) get-label) button-image-red)
+           (check-winner-user (+ cont 1 )))
+         ( else
+           #f)))
+
+; auxiliar function of check winner - for AI
+(define (check-winner-ai cont)
+  ( cond ( (equal? cont 50)
+         #t)
+         ( (equal? (send (get-button-from-number button-list-1-2 1 cont) get-label) button-image-green)
+           (check-winner-ai (+ cont 1 )))
+         ( else
+           #f)))
+
+; name: DISABLE BOARD BUTTONS
+; description: this function disables the buttons
+; input: counter for the recursion and analyse all the buttons
+(define (disable-board-buttons cont)
+  (cond ( (equal? cont 50)
+          )
+        ( else
+          (send (get-button-from-number button-list-1-2 1 cont) enable #f)
+          (disable-board-buttons (+ cont 1)))))
+           
+           
+; (get-button-from-number button-list-1-2 1 (car list))
 
 ; ### PANELS ###
 
@@ -263,8 +329,11 @@
 ; Current turn indicador
 (define current-turn-message (new message%
                                   [parent vert-pane-2]
-                                  [label "Current turn: "]
-                                  [font (make-object font% 15 'default 'normal 'normal)]))
+                                  [label "Current turn: User"]
+                                  [color (make-object color% "red")]
+                                  [vert-margin 50]
+                                  [horiz-margin 50]
+                                  [font (make-object font% 20 'default 'normal 'normal)]))
 
 (define ai-depth-selector (new combo-field%
                                [parent vert-pane-2]

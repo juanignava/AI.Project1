@@ -680,20 +680,13 @@
   (define random-filtered-children-list (filter-children-random  i-depth filtered-children-list 0))
 
   ; define which list to use based on the availabilty
-  (cond ( (or (< (len all-children-list) 7) (equal? (len filtered-children-list) 0))
-          (display "\n")
-          (display "Used all children, the total is:")
-          (display (len all-children-list))
+  (cond ( (or (< (len all-children-list) 9) (equal? (len filtered-children-list) 0))
           all-children-list)
-        ( (or (< (len filtered-children-list) 7) (equal? (len random-filtered-children-list) 0))
-          (display "\n")
-          (display "Used filtered children, the total is:")
-          (display (len filtered-children-list))
+        
+        ( (or (< (len filtered-children-list) 9) (equal? (len random-filtered-children-list) 0))
           filtered-children-list)
+        
         ( else
-          (display "\n")
-          (display "Used random filtered children, the total is:")
-          (display (len random-filtered-children-list))
           random-filtered-children-list)))
   
 
