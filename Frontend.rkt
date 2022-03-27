@@ -82,6 +82,12 @@
         ( else
           (get-button-from-color (object-list-next list) color))))
 
+; name: CHANGE DEPTH
+; description: changes the depth of the ai analysis un minimax
+(define (change-depth combo-option event)
+  (set! chosen-depth (string->number (send combo-option get-value))))
+
+
 ; name: BUTTON RESPONSE
 ; description: this function is the main function when a button
 ;    from the board is pressed.
@@ -148,8 +154,18 @@
   ; change the current turn message information
   (send current-turn-message set-color (make-object color% "green"))
   (send current-turn-message set-label "Current turn: AI    ")
-  
+
+  ; get the best movement from the backend and calculate the time taken
+  (define initial-time (current-inexact-milliseconds))
+  (display initial-time)
   (define movement (ai-movement chosen-depth))
+  (define time-lasted (/ (- (current-inexact-milliseconds) initial-time) 1000))
+  (set! time-lasted (/ (round (* time-lasted 100)) 100)) 
+  
+  (send ai-time-message set-label (string-append "Time in last movement (AI): " (number->string time-lasted) " s"))
+
+  
+  
 
   ; color past position gray
   (send (get-button-from-number button-list-1-2 1 (car movement)) enable #f)
@@ -338,13 +354,17 @@
 (define ai-depth-selector (new combo-field%
                                [parent vert-pane-2]
                                [label "AI Depth"]
-                               [choices '("3" "4" "5")]
+                               [init-value "1"]
+                               [vert-margin 70]
+                               [horiz-margin 150]
+                               [callback change-depth]
+                               [choices '("1" "2" "3" "4")]
                                [font (make-object font% 15 'default 'normal 'normal)]))
 
 (define ai-time-message (new message%
                              [parent vert-pane-2]
-                             [label "AI time in last movement: "]
-                             [font (make-object font% 15 'default 'normal 'normal)]))
+                             [label "Seconds in last movement (AI):             "]
+                             [font (make-object font% 12 'default 'normal 'normal)]))
 
 ; ### BUTONS ###
 
