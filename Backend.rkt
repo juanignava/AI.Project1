@@ -441,7 +441,7 @@
 (define (deliver-options button-number)
   (get-node button-number (board-n-1 game-board))
   (set! result-list '())
-  (posible-movements searched-node "all" 0 0))
+  (posible-movements searched-node "all" 0 0 0))
 
 
 ; name: GET NODE
@@ -467,62 +467,68 @@
 ;   cont-f -> a counter of the consecutive "free" items
 (define result-list '()) ; helper variable
 (provide posible-movements)
-(define (posible-movements node direction cont-b cont-f)
+(define (posible-movements node direction cont-b cont-f counter)
          ; check if node is actuallya node and it is not already in the result list
   (cond ( (and (node? node) (is-in-list node result-list)))
 
         ; control the consecutive blocks
-        ( (equal? cont-b 2))
-        ( (equal? cont-f 1))
+        ( (equal? cont-b 2)) ; 2 funciona bien
+        ( (equal? cont-f 2)) ; 1
         ( else
 
           ; case in which the direction is ul or all
           (cond ( (and (node? (node-nn-ul node)) (equal? (node-state (node-nn-ul node)) "free") (or (equal? direction "all") (equal? direction "ul")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-ul node)) result-list))))
-                  (posible-movements (node-nn-ul node) "ul" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-ul node) "ul" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-ul node)) (or (equal? direction "all") (equal? direction "ul")))
-                  (posible-movements (node-nn-ul node) "ul" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-ul node) "ul" (+ cont-b 1) 0 (+ counter 1))))
 
           ; case in which the direction is ur or all
           (cond ( (and (node? (node-nn-ur node)) (equal? (node-state (node-nn-ur node)) "free") (or (equal? direction "all") (equal? direction "ur")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-ur node)) result-list))))
-                  (posible-movements (node-nn-ur node) "ur" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-ur node) "ur" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-ur node)) (or (equal? direction "all") (equal? direction "ur")))
-                  (posible-movements (node-nn-ur node) "ur" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-ur node) "ur" (+ cont-b 1) 0 (+ counter 1))));;;
 
           ; case in which the directon is r or all
           (cond ( (and (node? (node-nn-r node)) (equal? (node-state (node-nn-r node)) "free") (or (equal? direction "all") (equal? direction "r")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-r node)) result-list))))
-                  (posible-movements (node-nn-r node) "r" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-r node) "r" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-r node)) (or (equal? direction "all") (equal? direction "r")))
-                  (posible-movements (node-nn-r node) "r" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-r node) "r" (+ cont-b 1) 0 (+ counter 1))))
 
           ; case in which the direction is dr or all
           (cond ( (and (node? (node-nn-dr node)) (equal? (node-state (node-nn-dr node)) "free") (or (equal? direction "all") (equal? direction "dr")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-dr node)) result-list))))
-                  (posible-movements (node-nn-dr node) "dr" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-dr node) "dr" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-dr node)) (or (equal? direction "all") (equal? direction "dr")))
-                  (posible-movements (node-nn-dr node) "dr" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-dr node) "dr" (+ cont-b 1) 0 (+ counter 1))))
 
           ; case in which the direction is dl or all
           (cond ( (and (node? (node-nn-dl node)) (equal? (node-state (node-nn-dl node)) "free") (or (equal? direction "all") (equal? direction "dl")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-dl node)) result-list))))
-                  (posible-movements (node-nn-dl node) "dl" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-dl node) "dl" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-dl node)) (or (equal? direction "all") (equal? direction "dl")))
-                  (posible-movements (node-nn-dl node) "dl" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-dl node) "dl" (+ cont-b 1) 0 (+ counter 1))))
 
           ; case in which the direction is l or all
           (cond ( (and (node? (node-nn-l node)) (equal? (node-state (node-nn-l node)) "free") (or (equal? direction "all") (equal? direction "l")))
                   (cond ( (not (equal? cont-f 1))
                           (set! result-list (cons (node-number (node-nn-l node)) result-list))))
-                  (posible-movements (node-nn-l node) "l" 0 (+ cont-f 1)))
+                  (cond ( (> counter 0)
+                          (posible-movements (node-nn-l node) "l" 0 (+ cont-f 1) (+ counter 1)))))
                 ( (and (node? (node-nn-l node)) (or (equal? direction "all") (equal? direction "l")))
-                  (posible-movements (node-nn-l node) "l" (+ cont-b 1) 0)))
+                  (posible-movements (node-nn-l node) "l" (+ cont-b 1) 0 (+ counter 1))))
           
           ; return result
           result-list)))
